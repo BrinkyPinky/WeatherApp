@@ -28,6 +28,7 @@ class MainScreenViewModel: ObservableObject {
         lon: 0
     ) {
         didSet {
+            doRequestForForecast()
             doRequestForCurrentWeather()
         }
     }
@@ -66,6 +67,10 @@ class MainScreenViewModel: ObservableObject {
         "\(lroundf(currentWeather.main.humidity ?? 0))%"
     }
     
+    // MARK: Forecast Properties:
+    @Published var forecastWeather = [WeatherModel]()
+
+    
     // MARK: SearchCityView Methods:
     
     func toggleIsSearchCityPresented() {
@@ -90,6 +95,15 @@ class MainScreenViewModel: ObservableObject {
     func doRequestForCurrentWeather() {
         NetworkManager.shared.requestCurrentWeather(lat: currentCity.lat ?? 55.7522, lon: currentCity.lon ?? 37.6156) { [unowned self] weather in
             currentWeather = weather
+        }
+    }
+    
+    // MARK: Forecast Methods:
+    
+    func doRequestForForecast() {
+        NetworkManager.shared.requestForecast(lat: currentCity.lat ?? 55.7522, lon: currentCity.lon ?? 37.6156) { [unowned self] forecast in
+            forecastWeather = forecast
+            print(forecast)
         }
     }
     

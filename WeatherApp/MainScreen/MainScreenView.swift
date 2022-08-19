@@ -21,6 +21,7 @@ struct MainScreenView: View {
                 }
             CurrentWeatherView(viewModel: viewModel)
                 .padding(.top, 8)
+            ForecastView(viewModel: viewModel)
         }
         .fullScreenCover(isPresented: $viewModel.isSearchCityViewPresented) {
             SearchCityView(viewModel: viewModel)
