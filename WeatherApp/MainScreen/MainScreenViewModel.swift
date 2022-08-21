@@ -23,9 +23,9 @@ class MainScreenViewModel: ObservableObject {
     
     // City that was picked by User
     @Published var currentCity = CityModel(
-        localNames: LocalNames(ru: "Нет данных"),
-        lat: 0,
-        lon: 0
+        localNames: LocalNames(ru: "Москва"),
+        lat: nil,
+        lon: nil
     ) {
         didSet {
             doRequestForForecast()
@@ -40,7 +40,8 @@ class MainScreenViewModel: ObservableObject {
         main: Main(temp: 0, feelsLike: 0, humidity: 0),
         visibility: 0,
         name: "Нет данных",
-        dt: Date()
+        dt: Date(),
+        timezone: 0
     )
     
     var cityNameForCurrentWeather: String {
@@ -68,7 +69,8 @@ class MainScreenViewModel: ObservableObject {
     }
     
     // MARK: Forecast Properties:
-    @Published var forecastWeather = [WeatherModel]()
+    
+    @Published var columnsForForecast = [ForecastViewModel]()
 
     
     // MARK: SearchCityView Methods:
@@ -102,8 +104,12 @@ class MainScreenViewModel: ObservableObject {
     
     func doRequestForForecast() {
         NetworkManager.shared.requestForecast(lat: currentCity.lat ?? 55.7522, lon: currentCity.lon ?? 37.6156) { [unowned self] forecast in
-            forecastWeather = forecast
-            print(forecast)
+            
+            columnsForForecast = []
+            forecast.forEach { [unowned self] weatherModel in
+                let forecastViewModel = ForecastViewModel(forecast: weatherModel, timezone: currentWeather.timezone ?? 0)
+                columnsForForecast.append(forecastViewModel)
+            }
         }
     }
     

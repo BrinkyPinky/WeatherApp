@@ -24,6 +24,7 @@
 		E29C415E28AFB1B5003A933A /* Extension + String.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29C415D28AFB1B5003A933A /* Extension + String.swift */; };
 		E29C416028AFB22C003A933A /* CurrentWeatherAdditionalInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29C415F28AFB22C003A933A /* CurrentWeatherAdditionalInformation.swift */; };
 		E29C416428AFB2C5003A933A /* CurrentWeatherAdditionalElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29C416328AFB2C5003A933A /* CurrentWeatherAdditionalElement.swift */; };
+		E29C689028B102BE006E5636 /* ForecastViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29C688F28B102BE006E5636 /* ForecastViewModel.swift */; };
 		E2BD18AE99417E5DED4063CE /* Pods_WeatherApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81860BCAAD49021CB26889C3 /* Pods_WeatherApp.framework */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +50,7 @@
 		E29C415D28AFB1B5003A933A /* Extension + String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension + String.swift"; sourceTree = "<group>"; };
 		E29C415F28AFB22C003A933A /* CurrentWeatherAdditionalInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentWeatherAdditionalInformation.swift; sourceTree = "<group>"; };
 		E29C416328AFB2C5003A933A /* CurrentWeatherAdditionalElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentWeatherAdditionalElement.swift; sourceTree = "<group>"; };
+		E29C688F28B102BE006E5636 /* ForecastViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				E24858D728AFBDC7002C606D /* ForecastView.swift */,
+				E29C688F28B102BE006E5636 /* ForecastViewModel.swift */,
 				E24858D328AFBD10002C606D /* ForecastElement.swift */,
 			);
 			path = Forecast;
@@ -305,6 +308,7 @@
 				E29C415E28AFB1B5003A933A /* Extension + String.swift in Sources */,
 				E25E446328AF90E2007FAA91 /* WeatherAppApp.swift in Sources */,
 				E24D06A228AF93B10008671E /* NetworkManager.swift in Sources */,
+				E29C689028B102BE006E5636 /* ForecastViewModel.swift in Sources */,
 				E29C415C28AFA561003A933A /* CurrentWeatherMainInformation.swift in Sources */,
 				E29C416428AFB2C5003A933A /* CurrentWeatherAdditionalElement.swift in Sources */,
 				E24D06AC28AF95630008671E /* Searchbar.swift in Sources */,

@@ -18,14 +18,11 @@ struct ForecastView: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHGrid(rows: rows, spacing: 8) {
-                ForEach(viewModel.forecastWeather, id: \.dt) { forecast in
-                    ForecastElement(
-                        temperature: "123",
-                        imageName: "sun.max.fill",
-                        time: Text("eqwx")
-                    )
+                ForEach(viewModel.columnsForForecast, id: \.id) { forecastViewModel in
+                    ForecastElement(viewModel: forecastViewModel)
                 }
             }
+            .padding(.horizontal, 16)
         }
     }
 }

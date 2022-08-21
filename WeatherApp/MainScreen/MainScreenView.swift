@@ -22,12 +22,15 @@ struct MainScreenView: View {
             CurrentWeatherView(viewModel: viewModel)
                 .padding(.top, 8)
             ForecastView(viewModel: viewModel)
+//                .frame(height: 160)
         }
         .fullScreenCover(isPresented: $viewModel.isSearchCityViewPresented) {
             SearchCityView(viewModel: viewModel)
         }
         .onAppear {
             UIView.setAnimationsEnabled(false)
+            viewModel.doRequestForCurrentWeather()
+            viewModel.doRequestForForecast()
         }
     }
 }

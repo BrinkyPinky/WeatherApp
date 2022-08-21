@@ -16,7 +16,8 @@ struct WeatherModel: Decodable {
     let main: Main
     let visibility: Int
     let name: String?
-    var dt: Date
+    let dt: Date
+    let timezone: Int?
 }
 
 struct Weather: Decodable {
