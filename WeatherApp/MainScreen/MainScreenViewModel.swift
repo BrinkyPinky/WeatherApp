@@ -104,8 +104,8 @@ class MainScreenViewModel: ObservableObject {
     
     func doRequestForForecast() {
         NetworkManager.shared.requestForecast(lat: currentCity.lat ?? 55.7522, lon: currentCity.lon ?? 37.6156) { [unowned self] forecast in
-            
             columnsForForecast = []
+            
             forecast.forEach { [unowned self] weatherModel in
                 let forecastViewModel = ForecastViewModel(forecast: weatherModel, timezone: currentWeather.timezone ?? 0)
                 columnsForForecast.append(forecastViewModel)

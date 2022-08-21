@@ -11,7 +11,18 @@ import SwiftUI
 struct WeatherAppApp: App {
     var body: some Scene {
         WindowGroup {
-            MainScreenView()
+            TabView {
+                MainScreenView()
+                    .tabItem {
+                        Text("Weather")
+                        Image(systemName: "cloud.fill")
+                    }
+                Text("Hello World")
+                    .tabItem {
+                        Text("My cities")
+                        Image(systemName: "heart.fill")
+                    }
+            }
         }
     }
 }

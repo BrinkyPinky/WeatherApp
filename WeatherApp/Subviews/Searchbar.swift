@@ -16,7 +16,7 @@ struct Searchbar: View {
             TextField("", text: $cityNameForRequest)
                 .padding(7)
                 .padding(.horizontal, 26)
-                .background(Color(.systemGray6))
+                .background(.quaternary)
                 .cornerRadius(8)
                 .overlay(
                     Image(systemName: "magnifyingglass")

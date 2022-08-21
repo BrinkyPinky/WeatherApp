@@ -12,7 +12,6 @@ protocol ForecastViewModelProtocol {
     var temperature: String { get }
     var date: String { get }
     var imageName: String { get }
-    var additionalDate: String { get }
     init(forecast: WeatherModel, timezone: Int)
 }
 
@@ -27,23 +26,9 @@ class ForecastViewModel: ForecastViewModelProtocol, ObservableObject {
         let date = Date(timeIntervalSince1970: forecast.dt.timeIntervalSinceReferenceDate)
         
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HH a"
+        dateFormatter.dateFormat = "E, d MMM HH a"
+        dateFormatter.locale = Locale(identifier: "ru_RU")
         dateFormatter.timeZone = TimeZone(secondsFromGMT: timezone)
-        
-        
-        return "\(dateFormatter.string(from: date))"
-    }
-    
-    var additionalDate: String {
-        let date = Date(timeIntervalSince1970: forecast.dt.timeIntervalSinceReferenceDate)
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "E, d MMM"
-        
-        //            let dateFormatter = DateFormatter()
-        //            dateFormatter.dateFormat = "E, d MMM"
-        //            dateFormatter.timeZone = TimeZone(secondsFromGMT: timezone)
-        //            dateFormatter.locale = Locale(identifier: "ru_RU")
         
         
         return "\(dateFormatter.string(from: date))"
@@ -69,7 +54,7 @@ class ForecastViewModel: ForecastViewModelProtocol, ObservableObject {
         case "11n": return "cloud.bolt.fill"
         case "13n": return "cloud.snow.fill"
         case "50n": return "cloud.fog.fill"
-        default: return ""
+        default: return "sun.max.fill"
         }
     }
     

@@ -11,20 +11,21 @@ struct ForecastElement: View {
     @ObservedObject var viewModel: ForecastViewModel
     
     var body: some View {
-        VStack {
-            Text(viewModel.additionalDate)
-            VStack(spacing: 8) {
-                Text(viewModel.temperature)
-                Image(systemName: viewModel.imageName)
-                    .renderingMode(.original)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 30, height: 30)
-                Text(viewModel.date)
-            }
-            .padding()
-            .background(.quaternary)
-        .cornerRadius(20)
+        HStack {
+            Text(viewModel.date)
+            Spacer()
+            Text(viewModel.temperature)
+            Image(systemName: viewModel.imageName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 30, height: 30)
+                .padding(.leading, 32)
         }
+    }
+}
+
+struct ForecastElement_Previews: PreviewProvider {
+    static var previews: some View {
+        ForecastElement(viewModel: ForecastViewModel(forecast: WeatherModel(weather: [Weather(description: "qwe", icon: "01d")], main: Main(temp: 10, feelsLike: 20, humidity: 30), visibility: 0, name: "20", dt: Date(), timezone: 10), timezone: 0))
     }
 }

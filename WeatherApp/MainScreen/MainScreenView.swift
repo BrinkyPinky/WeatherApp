@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Alamofire
 
 struct MainScreenView: View {
     
@@ -19,11 +20,11 @@ struct MainScreenView: View {
                     viewModel.cleanCityNameSearch()
                     viewModel.toggleIsSearchCityPresented()
                 }
-            CurrentWeatherView(viewModel: viewModel)
-                .padding(.top, 8)
-            ForecastView(viewModel: viewModel)
-//                .frame(height: 160)
+            
+            MainScreenList(viewModel: viewModel)
+                .listStyle(.insetGrouped)
         }
+        .background(Color(.systemGray6))
         .fullScreenCover(isPresented: $viewModel.isSearchCityViewPresented) {
             SearchCityView(viewModel: viewModel)
         }

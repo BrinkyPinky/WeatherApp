@@ -14,25 +14,30 @@ struct CurrentWeatherAdditionalInformation: View {
     let humidity: String
     
     var body: some View {
-        HStack(spacing: 32) {
+        HStack() {
             CurrentWeatherAdditionalElement(
                 systemNameOfImage: "thermometer",
                 labelText: "Ощущается",
                 additionalText: feelsLike
             )
-            
+            Spacer()
             CurrentWeatherAdditionalElement(
                 systemNameOfImage: "eye",
                 labelText: "Видимость",
                 additionalText: visibility
             )
-                        
+                      Spacer()
             CurrentWeatherAdditionalElement(
                 systemNameOfImage: "drop",
                 labelText: "Влажность",
                 additionalText: humidity
             )
         }
-        .padding()
+    }
+}
+
+struct CurrentWeatherAdditionalInformation_Previews: PreviewProvider {
+    static var previews: some View {
+        CurrentWeatherAdditionalInformation(feelsLike: "12", visibility: "50", humidity: "100%")
     }
 }
