@@ -5,7 +5,6 @@
 //  Created by Егор Шилов on 19.08.2022.
 //
 
-
 struct CityModel: Decodable {
     var name: String?
     var localNames: LocalNames?

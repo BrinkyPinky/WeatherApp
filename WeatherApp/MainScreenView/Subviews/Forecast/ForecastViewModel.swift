@@ -26,7 +26,7 @@ class ForecastViewModel: ForecastViewModelProtocol, ObservableObject {
         let date = Date(timeIntervalSince1970: forecast.dt.timeIntervalSinceReferenceDate)
         
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "E, d MMM HH a"
+        dateFormatter.dateFormat = "E, d MMM hh a"
         dateFormatter.locale = Locale(identifier: "ru_RU")
         dateFormatter.timeZone = TimeZone(secondsFromGMT: timezone)
         

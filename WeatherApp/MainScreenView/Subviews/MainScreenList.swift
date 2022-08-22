@@ -25,10 +25,6 @@ struct MainScreenList: View {
             }
             .textCase(nil)
         }
-        .onAppear {
-            UITableViewHeaderFooterView.appearance().tintColor = .clear
-
-        }
     }
 }
 
