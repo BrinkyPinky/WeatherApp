@@ -23,8 +23,8 @@ struct FavoriteCityElement: View {
                         .bold()
                     Spacer()
                     HStack {
-                        Text("Солнечно")
-                        Image(systemName: "sun.max.fill")
+                        Text(viewModel.weatherDescriptionForElement)
+                        Image(systemName: viewModel.imageNameForElement)
                     }
                 }
                 Spacer()

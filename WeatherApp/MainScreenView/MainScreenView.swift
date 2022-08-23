@@ -14,6 +14,15 @@ struct MainScreenView: View {
     var body: some View {
         VStack {
             HStack {
+                Button {
+                    viewModel.toggleIsFavoriteCitiesViewPresented()
+                } label: {
+                    Image(systemName: "star.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 30, height: 30)
+                        .padding(.leading, 16)
+                }
 
                 Searchbar(cityNameForRequest: .constant(""))
                     .disabled(true)
@@ -40,6 +49,9 @@ struct MainScreenView: View {
         .background(Color(.systemGray6))
         .fullScreenCover(isPresented: $viewModel.isSearchCityViewPresented) {
             SearchCityView(viewModel: viewModel)
+        }
+        .fullScreenCover(isPresented: $viewModel.isFavoriteCitiesViewPresented) {
+            FavoriteCitiesView(viewModel: viewModel)
         }
         .onAppear {
             UITableView.appearance().showsVerticalScrollIndicator = false

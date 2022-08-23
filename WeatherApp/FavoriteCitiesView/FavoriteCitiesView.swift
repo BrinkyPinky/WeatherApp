@@ -9,13 +9,16 @@ import SwiftUI
 
 struct FavoriteCitiesView: View {
     
-    @ObservedObject var rootViewModel: WeatherAppViewModel
-    @ObservedObject private var viewModel = FavoriteCitiesViewModel()
+    @ObservedObject var viewModel: MainScreenViewModel
     
     var body: some View {
         List {
             ForEach(viewModel.rowsForFavoriteCityElement, id: \.id) { elementViewModel in
-                FavoriteCityElement(viewModel: elementViewModel)
+                Button {
+                    viewModel.toggleIsFavoriteCitiesViewPresented()
+                } label: {
+                    FavoriteCityElement(viewModel: elementViewModel)
+                }
             }
             .onDelete() { indexSet in
                 viewModel.deleteFavoriteCity(at: indexSet)
@@ -31,6 +34,6 @@ struct FavoriteCitiesView: View {
 
 struct FavoriteCitiesView_Previews: PreviewProvider {
     static var previews: some View {
-        FavoriteCitiesView(rootViewModel: WeatherAppViewModel())
+        FavoriteCitiesView(viewModel: MainScreenViewModel())
     }
 }

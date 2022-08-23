@@ -13,7 +13,7 @@ struct CurrentWeatherView: View {
     var body: some View {
         VStack() {
             CurrentWeatherMainInformation(
-                imageName: viewModel.getIconName(),
+                imageName: viewModel.iconName,
                 cityName: viewModel.cityNameForCurrentWeather,
                 wheatherDesctiption: viewModel.descriptionForCurrentWeather,
                 temperature: viewModel.temperatureForCurrentWeather

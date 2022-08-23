@@ -19,7 +19,15 @@ class FavoriteCityElementViewModel: ObservableObject {
         "\(weatherForElement.name ?? "Нет данных")"
     }
     
-    private var weatherForElement: WeatherModel
+    var imageNameForElement: String {
+        IconManager.shared.getIconName(from: weatherForElement.weather.first?.icon ?? "")
+    }
+    
+    var weatherDescriptionForElement: String {
+        "\(weatherForElement.weather.first?.description?.capitalizingFirstLetter() ?? "")"
+    }
+    
+    var weatherForElement: WeatherModel
     
     required init(weatherForElement: WeatherModel) {
         self.weatherForElement = weatherForElement

@@ -7,6 +7,5 @@ target 'WeatherApp' do
 
   # Pods for WeatherApp
 pod 'Alamofire'
-pod 'RealmSwift'
 
 end

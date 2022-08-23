@@ -9,10 +9,37 @@ import Foundation
 
 class MainScreenViewModel: ObservableObject {
     
+    // MARK: FavoriteCitiesView Contain Stored and Published Properties:
+    
+    @Published var rowsForFavoriteCityElement = [FavoriteCityElementViewModel]()
+
+    
+    @Published var isFavoriteCitiesViewPresented = false
+    
+    private var cities: [CityEntity] = []
+    
+    var favoriteCitiesWeather: [WeatherModel] = [] {
+        didSet {
+            if favoriteCitiesWeather.count == cities.count {
+                let sortedFavoriteCitiesWeather = favoriteCitiesWeather.sorted(by: {$0.dt.timeIntervalSince1970 < $1.dt.timeIntervalSince1970})
+                
+                rowsForFavoriteCityElement = []
+                
+                sortedFavoriteCitiesWeather.forEach { weatherModel in
+                    let index = sortedFavoriteCitiesWeather.firstIndex(where: {$0 == weatherModel})
+                    
+                    let favoriteCityElementViewModel = FavoriteCityElementViewModel(weatherForElement: weatherModel)
+                    rowsForFavoriteCityElement.append(favoriteCityElementViewModel)
+                }
+            }
+        }
+    }
+    
     // MARK: IsFavoriteCity Published Properties:
     
     @Published var isFavoriteCity: Bool = false
     
+
     // MARK: SearchCityView Published Properties:
     
     @Published var citiesNamesForSearchList: [CityModel] = []
@@ -52,37 +79,45 @@ class MainScreenViewModel: ObservableObject {
         dt: Date(),
         timezone: 0
     )
+}
+
+// MARK: FavoriteCitiesView methods:
+
+extension MainScreenViewModel {
+
+    func toggleIsFavoriteCitiesViewPresented() {
+        isFavoriteCitiesViewPresented.toggle()
+    }
     
-    // MARK: General Methods:
+    func onApper() {
+        DataManager.shared.fetchCities()
+        cities = DataManager.shared.savedCities
+        doRequestForWeather()
+    }
     
-    func getIconName() -> String {
-        switch currentWeather.weather.first?.icon {
-        case "01d": return "sun.max.fill"
-        case "02d": return "cloud.sun.fill"
-        case "03d": return "cloud.fill"
-        case "04d": return "cloud.fill"
-        case "09d": return "cloud.rain.fill"
-        case "10d": return "cloud.sun.rain.fill"
-        case "11d": return "cloud.bolt.fill"
-        case "13d": return "cloud.snow.fill"
-        case "50d": return "cloud.fog.fill"
-        case "01n": return "moon.fill"
-        case "02n": return "cloud.moon.fill"
-        case "03n": return "cloud.fill"
-        case "04n": return "cloud.fill"
-        case "09n": return "cloud.rain.fill"
-        case "10n": return "cloud.moon.rain.fill"
-        case "11n": return "cloud.bolt.fill"
-        case "13n": return "cloud.snow.fill"
-        case "50n": return "cloud.fog.fill"
-        default: return "questionmark.circle"
+    func doRequestForWeather() {
+        favoriteCitiesWeather = []
+        
+        cities.forEach { CityEntity in
+            NetworkManager.shared.requestCurrentWeather(lat: CityEntity.lat, lon: CityEntity.lon) { [unowned self] weatherModel in
+                favoriteCitiesWeather.append(weatherModel)
+            }
         }
+    }
+    
+    func deleteFavoriteCity(at indexSet: IndexSet) {
+        DataManager.shared.deleteCityByIndexSet(indexSet: indexSet)
+        rowsForFavoriteCityElement.remove(at: indexSet.first ?? 0)
     }
 }
 
 // MARK: IsFavoriteCity Properties and Methods:
 
 extension MainScreenViewModel {
+    
+    func favoriteCityButtonPressed(cityModel: CityModel) {
+
+    }
     
     func toggleIsFavoriteButton() {
         isFavoriteCity.toggle()
@@ -159,6 +194,10 @@ extension MainScreenViewModel {
 // MARK: CurrentWeather Properties and Methods:
 
 extension MainScreenViewModel {
+    
+    var iconName: String {
+        IconManager.shared.getIconName(from: currentWeather.weather.first?.icon ?? "")
+    }
     
     var cityNameForCurrentWeather: String {
         "\(currentCity.localNames?.ru ?? currentCity.name ?? "")"
