@@ -9,6 +9,10 @@ import Foundation
 
 class MainScreenViewModel: ObservableObject {
     
+    // MARK: AlertPresentation:
+    
+    @Published var alertIsPresented = false
+    
     // MARK: FavoriteCitiesView Contain Stored and Published Properties:
     
     @Published var rowsForFavoriteCityElement = [FavoriteCityElementViewModel]()
@@ -21,14 +25,21 @@ class MainScreenViewModel: ObservableObject {
     var favoriteCitiesWeather: [WeatherModel] = [] {
         didSet {
             if favoriteCitiesWeather.count == cities.count {
-                let sortedFavoriteCitiesWeather = favoriteCitiesWeather.sorted(by: {$0.dt.timeIntervalSince1970 < $1.dt.timeIntervalSince1970})
-                
                 rowsForFavoriteCityElement = []
+                var sortedFavoriteCitiesWeather = [WeatherModel]()
+                
+                for city in cities {
+                    for favoriteCity in favoriteCitiesWeather {
+                        
+                        if city.lat == favoriteCity.coord?.lat && city.lon == favoriteCity.coord?.lon {
+                            sortedFavoriteCitiesWeather.append(favoriteCity)
+                        }
+                    }
+                }
                 
                 sortedFavoriteCitiesWeather.forEach { weatherModel in
                     let index = sortedFavoriteCitiesWeather.firstIndex(where: {$0 == weatherModel})
-                    
-                    let favoriteCityElementViewModel = FavoriteCityElementViewModel(weatherForElement: weatherModel)
+                    let favoriteCityElementViewModel = FavoriteCityElementViewModel(weatherForElement: weatherModel, cityEntity: cities[index ?? 0])
                     rowsForFavoriteCityElement.append(favoriteCityElementViewModel)
                 }
             }
@@ -39,7 +50,6 @@ class MainScreenViewModel: ObservableObject {
     
     @Published var isFavoriteCity: Bool = false
     
-
     // MARK: SearchCityView Published Properties:
     
     @Published var citiesNamesForSearchList: [CityModel] = []
@@ -72,6 +82,7 @@ class MainScreenViewModel: ObservableObject {
     // MARK: CurrentWeather Published Properties:
     
     @Published var currentWeather = WeatherModel(
+        coord: nil,
         weather: [Weather(description: "Нет данных", icon: "Нет данных")],
         main: Main(temp: 0, feelsLike: 0, humidity: 0),
         visibility: 0,
@@ -101,6 +112,8 @@ extension MainScreenViewModel {
         cities.forEach { CityEntity in
             NetworkManager.shared.requestCurrentWeather(lat: CityEntity.lat, lon: CityEntity.lon) { [unowned self] weatherModel in
                 favoriteCitiesWeather.append(weatherModel)
+            } errorCompletion: { [unowned self] _ in
+//                alertIsPresented.toggle()
             }
         }
     }
@@ -115,8 +128,15 @@ extension MainScreenViewModel {
 
 extension MainScreenViewModel {
     
-    func favoriteCityButtonPressed(cityModel: CityModel) {
-
+    func favoriteCityButtonPressed(elementViewModel: FavoriteCityElementViewModel) {
+        currentCity = CityModel(
+            name: elementViewModel.cityNameForElement,
+            localNames: nil,
+            lat: elementViewModel.cityEntity.lat,
+            lon: elementViewModel.cityEntity.lon,
+            country: nil,
+            state: nil
+        )
     }
     
     func toggleIsFavoriteButton() {
@@ -129,8 +149,8 @@ extension MainScreenViewModel {
         if isFavoriteCity == true {
             DataManager.shared.addCity(
                 cityName: cityNameForCurrentWeather,
-                lat: currentCity.lat ?? 0,
-                lon: currentCity.lon ?? 0
+                lat: currentWeather.coord?.lat ?? 0,
+                lon: currentWeather.coord?.lon ?? 0
             )
         } else {
             DataManager.shared.deleteCity(
@@ -171,6 +191,8 @@ extension MainScreenViewModel {
         
         NetworkManager.shared.requestCities(cityName: cityName as String) { [unowned self] cities in
             citiesNamesForSearchList = cities
+        } errorCompletion: { [unowned self] _ in
+//            alertIsPresented.toggle()
         }
     }
 }
@@ -187,6 +209,8 @@ extension MainScreenViewModel {
                 let forecastViewModel = ForecastViewModel(forecast: weatherModel, timezone: currentWeather.timezone ?? 0)
                 rowsForForecast.append(forecastViewModel)
             }
+        } errorCompletion: { [unowned self] _ in
+//            alertIsPresented.toggle()
         }
     }
 }
@@ -226,6 +250,8 @@ extension MainScreenViewModel {
     func doRequestForCurrentWeather() {
         NetworkManager.shared.requestCurrentWeather(lat: currentCity.lat ?? 55.7522, lon: currentCity.lon ?? 37.6156) { [unowned self] weather in
             currentWeather = weather
+        } errorCompletion: { [unowned self] _ in
+//            alertIsPresented.toggle()
         }
     }
 }

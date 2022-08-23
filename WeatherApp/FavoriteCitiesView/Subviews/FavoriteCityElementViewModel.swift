@@ -16,7 +16,7 @@ class FavoriteCityElementViewModel: ObservableObject {
     }
     
     var cityNameForElement: String {
-        "\(weatherForElement.name ?? "Нет данных")"
+        "\(cityEntity.cityName ?? "Нет данных")"
     }
     
     var imageNameForElement: String {
@@ -29,7 +29,10 @@ class FavoriteCityElementViewModel: ObservableObject {
     
     var weatherForElement: WeatherModel
     
-    required init(weatherForElement: WeatherModel) {
+    var cityEntity: CityEntity
+    
+    required init(weatherForElement: WeatherModel, cityEntity: CityEntity) {
         self.weatherForElement = weatherForElement
+        self.cityEntity = cityEntity
     }
 }

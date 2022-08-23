@@ -26,6 +26,6 @@ struct ForecastElement: View {
 
 struct ForecastElement_Previews: PreviewProvider {
     static var previews: some View {
-        ForecastElement(viewModel: ForecastViewModel(forecast: WeatherModel(weather: [Weather(description: "qwe", icon: "01d")], main: Main(temp: 10, feelsLike: 20, humidity: 30), visibility: 0, name: "20", dt: Date(), timezone: 10), timezone: 0))
+        ForecastElement(viewModel: ForecastViewModel(forecast: WeatherModel(coord: nil, weather: [Weather(description: "qwe", icon: "01d")], main: Main(temp: 10, feelsLike: 20, humidity: 30), visibility: 0, name: "20", dt: Date(), timezone: 10), timezone: 0))
     }
 }

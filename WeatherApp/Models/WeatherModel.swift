@@ -12,12 +12,24 @@ struct ForecastModel: Decodable {
 }
 
 struct WeatherModel: Decodable {
+    let coord: Coord?
     let weather: [Weather]
     let main: Main
     let visibility: Int
     let name: String?
     let dt: Date
     let timezone: Int?
+}
+
+extension WeatherModel: Equatable {
+    static func == (lhs: WeatherModel, rhs: WeatherModel) -> Bool {
+        return lhs.coord?.lon == rhs.coord?.lon && lhs.coord?.lat == rhs.coord?.lat
+    }
+}
+
+struct Coord: Decodable {
+    let lon: Double?
+    let lat: Double?
 }
 
 struct Weather: Decodable {

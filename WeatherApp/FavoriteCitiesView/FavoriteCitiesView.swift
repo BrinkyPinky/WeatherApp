@@ -12,22 +12,38 @@ struct FavoriteCitiesView: View {
     @ObservedObject var viewModel: MainScreenViewModel
     
     var body: some View {
-        List {
-            ForEach(viewModel.rowsForFavoriteCityElement, id: \.id) { elementViewModel in
+        NavigationView {
+            VStack {
+                AlertView(isPresented: $viewModel.alertIsPresented)
+                List {
+                    ForEach(viewModel.rowsForFavoriteCityElement, id: \.id) { elementViewModel in
+                        Button {
+                            viewModel.toggleIsFavoriteCitiesViewPresented()
+                            viewModel.favoriteCityButtonPressed(elementViewModel: elementViewModel)
+                        } label: {
+                            FavoriteCityElement(viewModel: elementViewModel)
+                        }
+                    }
+                    .onDelete() { indexSet in
+                        viewModel.deleteFavoriteCity(at: indexSet)
+                    }
+                    .listRowSeparator(.hidden)
+                }
+                .listStyle(.plain)
                 Button {
                     viewModel.toggleIsFavoriteCitiesViewPresented()
                 } label: {
-                    FavoriteCityElement(viewModel: elementViewModel)
+                    Text("Cancel")
+                        .padding()
+                        .background(.quaternary)
+                        .cornerRadius(10)
+                    
                 }
             }
-            .onDelete() { indexSet in
-                viewModel.deleteFavoriteCity(at: indexSet)
+            .onAppear {
+                viewModel.onApper()
             }
-            .listRowSeparator(.hidden)
-        }
-        .listStyle(.plain)
-        .onAppear {
-            viewModel.onApper()
+            .navigationTitle("Города")
         }
     }
 }

@@ -12,6 +12,7 @@ struct SearchCityView: View {
     
     var body: some View {
         VStack {
+            AlertView(isPresented: $viewModel.alertIsPresented)
             HStack {
                 Searchbar(cityNameForRequest: $viewModel.cityNameSearch)
                 Button("Cancel") {

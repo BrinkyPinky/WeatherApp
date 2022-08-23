@@ -13,6 +13,7 @@ struct MainScreenView: View {
     
     var body: some View {
         VStack {
+            AlertView(isPresented: $viewModel.alertIsPresented)
             HStack {
                 Button {
                     viewModel.toggleIsFavoriteCitiesViewPresented()

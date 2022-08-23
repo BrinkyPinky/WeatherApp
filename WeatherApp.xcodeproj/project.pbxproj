@@ -32,6 +32,7 @@
 		E2A388A828B4ADDA000841FC /* FavoriteCityElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A388A728B4ADDA000841FC /* FavoriteCityElement.swift */; };
 		E2A388AA28B4AE58000841FC /* FavoriteCityElementViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A388A928B4AE58000841FC /* FavoriteCityElementViewModel.swift */; };
 		E2A388B028B4F41A000841FC /* IconManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A388AF28B4F41A000841FC /* IconManager.swift */; };
+		E2BBCE2428B56FB900FDFD19 /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BBCE2328B56FB900FDFD19 /* AlertView.swift */; };
 		E2BD18AE99417E5DED4063CE /* Pods_WeatherApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81860BCAAD49021CB26889C3 /* Pods_WeatherApp.framework */; };
 /* End PBXBuildFile section */
 
@@ -65,6 +66,7 @@
 		E2A388A728B4ADDA000841FC /* FavoriteCityElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteCityElement.swift; sourceTree = "<group>"; };
 		E2A388A928B4AE58000841FC /* FavoriteCityElementViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteCityElementViewModel.swift; sourceTree = "<group>"; };
 		E2A388AF28B4F41A000841FC /* IconManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconManager.swift; sourceTree = "<group>"; };
+		E2BBCE2328B56FB900FDFD19 /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -200,6 +202,7 @@
 			isa = PBXGroup;
 			children = (
 				E25E446228AF90E2007FAA91 /* WeatherAppApp.swift */,
+				E2BBCE2328B56FB900FDFD19 /* AlertView.swift */,
 				E24D069A28AF918C0008671E /* MainScreenView */,
 				E215578E28B3BAB6005B76F9 /* FavoriteCitiesView */,
 				E24D06A028AF93990008671E /* Services */,
@@ -345,6 +348,7 @@
 				E29C415E28AFB1B5003A933A /* Extension + String.swift in Sources */,
 				E25E446328AF90E2007FAA91 /* WeatherAppApp.swift in Sources */,
 				E24D06A228AF93B10008671E /* NetworkManager.swift in Sources */,
+				E2BBCE2428B56FB900FDFD19 /* AlertView.swift in Sources */,
 				E29C689028B102BE006E5636 /* ForecastViewModel.swift in Sources */,
 				E29C415C28AFA561003A933A /* CurrentWeatherMainInformation.swift in Sources */,
 				E2A388B028B4F41A000841FC /* IconManager.swift in Sources */,
