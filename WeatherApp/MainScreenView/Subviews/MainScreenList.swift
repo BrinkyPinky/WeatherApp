@@ -14,7 +14,7 @@ struct MainScreenList: View {
     var body: some View {
         List {
             Section {
-                ForEach(viewModel.columnsForForecast, id: \.id) { forecastViewModel in
+                ForEach(viewModel.rowsForForecast, id: \.id) { forecastViewModel in
                     ForecastElement(viewModel: forecastViewModel)
                 }
             } header: {

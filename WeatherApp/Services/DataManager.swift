@@ -34,6 +34,13 @@ class DataManager {
         saveDate()
     }
     
+    func deleteCityByIndexSet(indexSet: IndexSet) {
+        let index = indexSet.first
+        let cityToDelete = savedCities[index ?? 0]
+        container.viewContext.delete(cityToDelete)
+        saveDate()
+    }
+    
     func deleteCity(cityName: String) {
         guard let deleteCity = savedCities.first(where: { $0.cityName == cityName }) else { return }
         

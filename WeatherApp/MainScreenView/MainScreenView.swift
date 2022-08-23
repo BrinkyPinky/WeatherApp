@@ -14,6 +14,7 @@ struct MainScreenView: View {
     var body: some View {
         VStack {
             HStack {
+
                 Searchbar(cityNameForRequest: .constant(""))
                     .disabled(true)
                     .onTapGesture {
@@ -41,10 +42,7 @@ struct MainScreenView: View {
             SearchCityView(viewModel: viewModel)
         }
         .onAppear {
-            UIView.setAnimationsEnabled(false)
             UITableView.appearance().showsVerticalScrollIndicator = false
-//            let path = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
-//            print("\(path)")
         }
     }
 }

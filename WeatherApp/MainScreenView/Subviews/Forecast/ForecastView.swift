@@ -12,7 +12,7 @@ struct ForecastView: View {
     @ObservedObject var viewModel: MainScreenViewModel
     
     var body: some View {
-        List(viewModel.columnsForForecast, id: \.id) { forecastViewModel in
+        List(viewModel.rowsForForecast, id: \.id) { forecastViewModel in
             ForecastElement(viewModel: forecastViewModel)
         }
     }

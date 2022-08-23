@@ -9,6 +9,9 @@ import SwiftUI
 
 @main
 struct WeatherAppApp: App {
+    
+    @ObservedObject private var viewModel = WeatherAppViewModel()
+    
     var body: some Scene {
         WindowGroup {
             TabView {
@@ -17,7 +20,7 @@ struct WeatherAppApp: App {
                         Text("Weather")
                         Image(systemName: "cloud.fill")
                     }
-                Text("Hello World")
+                FavoriteCitiesView(rootViewModel: viewModel)
                     .tabItem {
                         Text("My cities")
                         Image(systemName: "heart.fill")

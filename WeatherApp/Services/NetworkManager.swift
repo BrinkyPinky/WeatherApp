@@ -21,7 +21,7 @@ class NetworkManager {
             case .success(let data):
                 completion(data.list)
             case .failure(let error):
-                print("")
+                print(error)
             }
         }
     }
@@ -37,7 +37,7 @@ class NetworkManager {
             case .success(let data):
                 completion(data)
             case .failure(let error):
-                print("")
+                print(error)
             }
         }
     }
@@ -51,7 +51,7 @@ class NetworkManager {
             case .success(let data):
                 completion(data)
             case .failure(let error):
-                print("")
+                print(error)
             }
         }
     }
