@@ -13,7 +13,7 @@ class NetworkManager {
     
     // MARK: Request api for forecast
     
-    func requestForecast(lat: Double, lon: Double, completion: @escaping ([WeatherModel]) -> Void, errorCompletion: @escaping (AFError) -> Void) {
+    func requestForecast(lat: Float, lon: Float, completion: @escaping ([WeatherModel]) -> Void, errorCompletion: @escaping (AFError) -> Void) {
         let url = "https://api.openweathermap.org/data/2.5/forecast?lat=\(lat)&lon=\(lon)&appid=a4438b663ba159961dbcaed12f9993f7&lang=ru&units=metric"
         
         AF.request(url).responseDecodable(of: ForecastModel.self) { response in
@@ -30,7 +30,7 @@ class NetworkManager {
     
     // MARK: Request api for current weather
     
-    func requestCurrentWeather(lat: Double, lon: Double, completion: @escaping (WeatherModel) -> Void, errorCompletion: @escaping (AFError) -> Void) {
+    func requestCurrentWeather(lat: Float, lon: Float, completion: @escaping (WeatherModel) -> Void, errorCompletion: @escaping (AFError) -> Void) {
         
         let url = "https://api.openweathermap.org/data/2.5/weather?lat=\(lat)&lon=\(lon)&appid=a4438b663ba159961dbcaed12f9993f7&lang=ru&units=metric"
         

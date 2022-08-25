@@ -8,8 +8,8 @@
 struct CityModel: Decodable {
     var name: String?
     var localNames: LocalNames?
-    var lat: Double?
-    var lon: Double?
+    var lat: Float?
+    var lon: Float?
     var country: String?
     var state: String?
     

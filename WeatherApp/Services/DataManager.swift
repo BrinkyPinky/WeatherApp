@@ -26,7 +26,7 @@ class DataManager {
         print(savedCities)
     }
     
-    func addCity(cityName: String, lat: Double, lon: Double) {
+    func addCity(cityName: String, lat: Float, lon: Float) {
         let newCity = CityEntity(context: container.viewContext)
         newCity.cityName = cityName
         newCity.lat = lat

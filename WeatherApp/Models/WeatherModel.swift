@@ -28,8 +28,8 @@ extension WeatherModel: Equatable {
 }
 
 struct Coord: Decodable {
-    let lon: Double?
-    let lat: Double?
+    let lon: Float?
+    let lat: Float?
 }
 
 struct Weather: Decodable {

@@ -44,6 +44,9 @@ struct FavoriteCitiesView: View {
                 viewModel.onApper()
             }
             .navigationTitle("Города")
+            .toolbar {
+                EditButton()
+            }
         }
     }
 }

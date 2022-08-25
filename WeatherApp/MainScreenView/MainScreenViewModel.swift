@@ -13,7 +13,7 @@ class MainScreenViewModel: ObservableObject {
     
     @Published var alertIsPresented = false
     
-    // MARK: FavoriteCitiesView Contain Stored and Published Properties:
+    // MARK: FavoriteCitiesView Stored and Published Properties:
     
     @Published var rowsForFavoriteCityElement = [FavoriteCityElementViewModel]()
 
@@ -27,16 +27,15 @@ class MainScreenViewModel: ObservableObject {
             if favoriteCitiesWeather.count == cities.count {
                 rowsForFavoriteCityElement = []
                 var sortedFavoriteCitiesWeather = [WeatherModel]()
+
                 
                 for city in cities {
                     for favoriteCity in favoriteCitiesWeather {
-                        
                         if city.lat == favoriteCity.coord?.lat && city.lon == favoriteCity.coord?.lon {
                             sortedFavoriteCitiesWeather.append(favoriteCity)
                         }
                     }
                 }
-                
                 sortedFavoriteCitiesWeather.forEach { weatherModel in
                     let index = sortedFavoriteCitiesWeather.firstIndex(where: {$0 == weatherModel})
                     let favoriteCityElementViewModel = FavoriteCityElementViewModel(weatherForElement: weatherModel, cityEntity: cities[index ?? 0])
@@ -113,7 +112,7 @@ extension MainScreenViewModel {
             NetworkManager.shared.requestCurrentWeather(lat: CityEntity.lat, lon: CityEntity.lon) { [unowned self] weatherModel in
                 favoriteCitiesWeather.append(weatherModel)
             } errorCompletion: { [unowned self] _ in
-//                alertIsPresented.toggle()
+                alertIsPresented.toggle()
             }
         }
     }
@@ -192,7 +191,7 @@ extension MainScreenViewModel {
         NetworkManager.shared.requestCities(cityName: cityName as String) { [unowned self] cities in
             citiesNamesForSearchList = cities
         } errorCompletion: { [unowned self] _ in
-//            alertIsPresented.toggle()
+            alertIsPresented.toggle()
         }
     }
 }
@@ -210,7 +209,7 @@ extension MainScreenViewModel {
                 rowsForForecast.append(forecastViewModel)
             }
         } errorCompletion: { [unowned self] _ in
-//            alertIsPresented.toggle()
+            alertIsPresented.toggle()
         }
     }
 }
@@ -251,7 +250,7 @@ extension MainScreenViewModel {
         NetworkManager.shared.requestCurrentWeather(lat: currentCity.lat ?? 55.7522, lon: currentCity.lon ?? 37.6156) { [unowned self] weather in
             currentWeather = weather
         } errorCompletion: { [unowned self] _ in
-//            alertIsPresented.toggle()
+            alertIsPresented.toggle()
         }
     }
 }
