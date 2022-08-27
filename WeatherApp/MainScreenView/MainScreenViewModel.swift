@@ -6,9 +6,49 @@
 //
 
 import Foundation
+import CoreLocation
 
-class MainScreenViewModel: ObservableObject {
+class MainScreenViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     
+    // MARK: Get User Location
+    
+    private let manager = CLLocationManager()
+    
+    private var userLocation: CLLocationCoordinate2D? {
+        didSet {
+            changeWeatherByUserGeoposition()
+        }
+    }
+    
+    override init() {
+        super.init()
+        self.manager.delegate = self
+        self.manager.requestAlwaysAuthorization()
+    }
+    
+    func getUserLocation() {
+        manager.requestLocation()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        let location = locations.last?.coordinate
+        userLocation = location
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error.localizedDescription)
+    }
+    
+    private func changeWeatherByUserGeoposition() {
+        currentCity = CityModel(
+            name: "Ваша геопозиция",
+            localNames: nil,
+            lat: Float(userLocation?.latitude ?? 0),
+            lon: Float(userLocation?.longitude ?? 0),
+            country: nil,
+            state: nil
+        )
+    }
     // MARK: AlertPresentation:
     
     @Published var alertIsPresented = false
@@ -16,7 +56,7 @@ class MainScreenViewModel: ObservableObject {
     // MARK: FavoriteCitiesView Stored and Published Properties:
     
     @Published var rowsForFavoriteCityElement = [FavoriteCityElementViewModel]()
-
+    
     
     @Published var isFavoriteCitiesViewPresented = false
     
@@ -27,7 +67,7 @@ class MainScreenViewModel: ObservableObject {
             if favoriteCitiesWeather.count == cities.count {
                 rowsForFavoriteCityElement = []
                 var sortedFavoriteCitiesWeather = [WeatherModel]()
-
+                
                 
                 for city in cities {
                     for favoriteCity in favoriteCitiesWeather {
@@ -94,7 +134,7 @@ class MainScreenViewModel: ObservableObject {
 // MARK: FavoriteCitiesView methods:
 
 extension MainScreenViewModel {
-
+    
     func toggleIsFavoriteCitiesViewPresented() {
         isFavoriteCitiesViewPresented.toggle()
     }
@@ -120,6 +160,7 @@ extension MainScreenViewModel {
     func deleteFavoriteCity(at indexSet: IndexSet) {
         DataManager.shared.deleteCityByIndexSet(indexSet: indexSet)
         rowsForFavoriteCityElement.remove(at: indexSet.first ?? 0)
+        loadCitiesFromDataManager()
     }
 }
 
@@ -144,7 +185,6 @@ extension MainScreenViewModel {
     }
     
     func addCityToDataManager() {
-
         if isFavoriteCity == true {
             DataManager.shared.addCity(
                 cityName: cityNameForCurrentWeather,

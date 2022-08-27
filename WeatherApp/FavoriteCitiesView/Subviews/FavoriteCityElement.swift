@@ -13,26 +13,23 @@ struct FavoriteCityElement: View {
     
     var body: some View {
         ZStack {
-            Rectangle()
-                .foregroundColor(.clear)
-                .background(.quaternary)
-                .cornerRadius(20)
             HStack {
                 VStack(alignment: .leading) {
                     Text(viewModel.cityNameForElement)
                         .bold()
+                        .padding(.top)
                     Spacer()
                     HStack {
                         Text(viewModel.weatherDescriptionForElement)
                         Image(systemName: viewModel.imageNameForElement)
                     }
+                    .padding(.bottom)
                 }
                 Spacer()
                 Text(viewModel.temperatureForElement)
                     .font(.system(size: 32))
             }
-            .padding()
         }
-        .frame(height: 80)
+        .frame(height: 60)
     }
 }

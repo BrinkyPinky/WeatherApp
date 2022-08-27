@@ -23,29 +23,22 @@ struct FavoriteCitiesView: View {
                         } label: {
                             FavoriteCityElement(viewModel: elementViewModel)
                         }
+                        .foregroundColor(.primary)
                     }
                     .onDelete() { indexSet in
                         viewModel.deleteFavoriteCity(at: indexSet)
                     }
-                    .listRowSeparator(.hidden)
                 }
-                .listStyle(.plain)
-                Button {
-                    viewModel.toggleIsFavoriteCitiesViewPresented()
-                } label: {
-                    Text("Cancel")
-                        .padding()
-                        .background(.quaternary)
-                        .cornerRadius(10)
-                    
+                .listRowSeparator(.hidden)
+                .listStyle(.insetGrouped)
+                
+                .onAppear {
+                    viewModel.onApper()
                 }
-            }
-            .onAppear {
-                viewModel.onApper()
-            }
-            .navigationTitle("Города")
-            .toolbar {
-                EditButton()
+                .navigationTitle("Города")
+                .toolbar {
+                    EditButton()
+                }
             }
         }
     }

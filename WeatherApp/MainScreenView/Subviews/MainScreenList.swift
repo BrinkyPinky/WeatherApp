@@ -19,7 +19,7 @@ struct MainScreenList: View {
                 }
             } header: {
                 CurrentWeatherView(viewModel: viewModel)
-                    .padding(.top, -40)
+                    .padding(.top, -20)
                     .padding(.bottom, 8)
                     .foregroundColor(.primary)
             }

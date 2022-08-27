@@ -56,6 +56,7 @@ struct MainScreenView: View {
         }
         .onAppear {
             UITableView.appearance().showsVerticalScrollIndicator = false
+            viewModel.getUserLocation()
         }
     }
 }
