@@ -11,12 +11,12 @@ class DataManager {
     
     static let shared = DataManager()
     
-    let container = NSPersistentContainer(name: "CitiesContainer")
+    let favoriteCitiesContainer = NSPersistentContainer(name: "CitiesContainer")
     
     var savedCities: [CityEntity] = []
     
     init() {
-        container.loadPersistentStores { description, error in
+        favoriteCitiesContainer.loadPersistentStores { description, error in
             if let error = error {
                 print("Core data error initialization: \(error)")
             }
@@ -27,7 +27,7 @@ class DataManager {
     }
     
     func addCity(cityName: String, lat: Float, lon: Float) {
-        let newCity = CityEntity(context: container.viewContext)
+        let newCity = CityEntity(context: favoriteCitiesContainer.viewContext)
         newCity.cityName = cityName
         newCity.lat = lat
         newCity.lon = lon
@@ -37,14 +37,14 @@ class DataManager {
     func deleteCityByIndexSet(indexSet: IndexSet) {
         let index = indexSet.first
         let cityToDelete = savedCities[index ?? 0]
-        container.viewContext.delete(cityToDelete)
+        favoriteCitiesContainer.viewContext.delete(cityToDelete)
         saveDate()
     }
     
     func deleteCity(cityName: String) {
         guard let deleteCity = savedCities.first(where: { $0.cityName == cityName }) else { return }
         
-        container.viewContext.delete(deleteCity)
+        favoriteCitiesContainer.viewContext.delete(deleteCity)
         saveDate()
     }
     
@@ -52,7 +52,7 @@ class DataManager {
         let request = NSFetchRequest<CityEntity>(entityName: "CityEntity")
         
         do {
-            savedCities = try container.viewContext.fetch(request)
+            savedCities = try favoriteCitiesContainer.viewContext.fetch(request)
         } catch let error {
             print("Error fetching entity: \(error)")
         }
@@ -60,7 +60,7 @@ class DataManager {
     
     func saveDate() {
         do {
-            try container.viewContext.save()
+            try favoriteCitiesContainer.viewContext.save()
             fetchCities()
         } catch let error {
             print("Error saving entity: \(error)")

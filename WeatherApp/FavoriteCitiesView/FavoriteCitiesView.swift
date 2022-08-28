@@ -16,19 +16,25 @@ struct FavoriteCitiesView: View {
             VStack {
                 AlertView(isPresented: $viewModel.alertIsPresented)
                 List {
+                    Button {
+                        viewModel.favoriteCityButtonPressed(elementViewModel: viewModel.locationFavoriteCityElementViewModel, lat: viewModel.locationFavoriteCityElementViewModel.lat, lon: viewModel.locationFavoriteCityElementViewModel.lon)
+                        viewModel.toggleIsFavoriteCitiesViewPresented()
+                    } label: {
+                        FavoriteCityElement(viewModel: viewModel.locationFavoriteCityElementViewModel)
+                    }
                     ForEach(viewModel.rowsForFavoriteCityElement, id: \.id) { elementViewModel in
                         Button {
+                            viewModel.favoriteCityButtonPressed(elementViewModel: elementViewModel, lat: elementViewModel.lat, lon: elementViewModel.lon)
                             viewModel.toggleIsFavoriteCitiesViewPresented()
-                            viewModel.favoriteCityButtonPressed(elementViewModel: elementViewModel)
                         } label: {
                             FavoriteCityElement(viewModel: elementViewModel)
                         }
-                        .foregroundColor(.primary)
                     }
                     .onDelete() { indexSet in
                         viewModel.deleteFavoriteCity(at: indexSet)
                     }
                 }
+                .foregroundColor(.primary)
                 .listRowSeparator(.hidden)
                 .listStyle(.insetGrouped)
                 

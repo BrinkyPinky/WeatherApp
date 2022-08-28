@@ -15,10 +15,6 @@ class FavoriteCityElementViewModel: ObservableObject {
         "\(lroundf(weatherForElement.main.temp ?? 0))°"
     }
     
-    var cityNameForElement: String {
-        "\(cityEntity.cityName ?? "Нет данных")"
-    }
-    
     var imageNameForElement: String {
         IconManager.shared.getIconName(from: weatherForElement.weather.first?.icon ?? "")
     }
@@ -29,10 +25,18 @@ class FavoriteCityElementViewModel: ObservableObject {
     
     var weatherForElement: WeatherModel
     
-    var cityEntity: CityEntity
+    var cityNameForElement: String
     
-    required init(weatherForElement: WeatherModel, cityEntity: CityEntity) {
+    var lat: Float {
+        weatherForElement.coord?.lat ?? 0
+    }
+    
+    var lon: Float {
+        weatherForElement.coord?.lon ?? 0
+    }
+    
+    required init(weatherForElement: WeatherModel, cityNameForElement: String) {
         self.weatherForElement = weatherForElement
-        self.cityEntity = cityEntity
+        self.cityNameForElement = cityNameForElement
     }
 }

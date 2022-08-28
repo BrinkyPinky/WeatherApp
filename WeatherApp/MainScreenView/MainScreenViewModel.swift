@@ -7,12 +7,15 @@
 
 import Foundation
 import CoreLocation
+import Alamofire
 
 class MainScreenViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     // MARK: Get User Location
     
     private let manager = CLLocationManager()
+    
+    @Published var locationFavoriteCityElementViewModel = FavoriteCityElementViewModel(weatherForElement: WeatherModel(coord: nil, weather: [Weather(description: nil, icon: nil)], main: Main(temp: nil, feelsLike: nil, humidity: nil), visibility: 0, name: nil, dt: Date(), timezone: nil), cityNameForElement: "Не удалось определить геопозицию")
     
     private var userLocation: CLLocationCoordinate2D? {
         didSet {
@@ -39,15 +42,18 @@ class MainScreenViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
         print(error.localizedDescription)
     }
     
+    var locationWeather = [WeatherModel]() {
+        didSet {
+            locationFavoriteCityElementViewModel = FavoriteCityElementViewModel(weatherForElement: locationWeather.first ?? WeatherModel(coord: nil, weather: [Weather(description: nil, icon: nil)], main: Main(temp: nil, feelsLike: nil, humidity: nil), visibility: 0, name: nil, dt: Date(), timezone: nil), cityNameForElement: "\(locationWeather.first?.name ?? "Нет данных") (Ваша геопозиция)")
+        }
+    }
+    
     private func changeWeatherByUserGeoposition() {
-        currentCity = CityModel(
-            name: "Ваша геопозиция",
-            localNames: nil,
-            lat: Float(userLocation?.latitude ?? 0),
-            lon: Float(userLocation?.longitude ?? 0),
-            country: nil,
-            state: nil
-        )
+        NetworkManager.shared.requestCurrentWeather(lat: Float(userLocation?.latitude ?? 0), lon: Float(userLocation?.longitude ?? 0)) { [unowned self] weatherModel in
+            locationWeather.append(weatherModel)
+        } errorCompletion: { [unowned self] _ in
+            alertIsPresented.toggle()
+        }
     }
     // MARK: AlertPresentation:
     
@@ -71,14 +77,21 @@ class MainScreenViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
                 
                 for city in cities {
                     for favoriteCity in favoriteCitiesWeather {
-                        if city.lat == favoriteCity.coord?.lat && city.lon == favoriteCity.coord?.lon {
+                        let cityLat = String(format: "%.2f", city.lat)
+                        let cityLon = String(format: "%.2f", city.lon)
+                        let favoriteCityLat = String(format: "%.2f", Double((favoriteCity.coord?.lat)!))
+                        let favoriteCityLon = String(format: "%.2f", Double((favoriteCity.coord?.lon)!))
+
+                        if cityLat == favoriteCityLat && cityLon == favoriteCityLon {
                             sortedFavoriteCitiesWeather.append(favoriteCity)
                         }
                     }
                 }
                 sortedFavoriteCitiesWeather.forEach { weatherModel in
                     let index = sortedFavoriteCitiesWeather.firstIndex(where: {$0 == weatherModel})
-                    let favoriteCityElementViewModel = FavoriteCityElementViewModel(weatherForElement: weatherModel, cityEntity: cities[index ?? 0])
+                    let cityName = cities[index ?? 0].cityName
+                    
+                    let favoriteCityElementViewModel = FavoriteCityElementViewModel(weatherForElement: weatherModel, cityNameForElement: cityName ?? "Нет данных")
                     rowsForFavoriteCityElement.append(favoriteCityElementViewModel)
                 }
             }
@@ -168,12 +181,12 @@ extension MainScreenViewModel {
 
 extension MainScreenViewModel {
     
-    func favoriteCityButtonPressed(elementViewModel: FavoriteCityElementViewModel) {
+    func favoriteCityButtonPressed(elementViewModel: FavoriteCityElementViewModel, lat: Float, lon: Float) {
         currentCity = CityModel(
             name: elementViewModel.cityNameForElement,
             localNames: nil,
-            lat: elementViewModel.cityEntity.lat,
-            lon: elementViewModel.cityEntity.lon,
+            lat: lat,
+            lon: lon,
             country: nil,
             state: nil
         )
