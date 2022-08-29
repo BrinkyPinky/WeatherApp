@@ -38,7 +38,6 @@ struct SearchCityView: View {
                     }
                 }
                 .listSectionSeparator(.hidden)
-                
             }
             .listStyle(.plain)
         }
