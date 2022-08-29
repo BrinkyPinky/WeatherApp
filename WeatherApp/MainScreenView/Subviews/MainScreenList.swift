@@ -18,7 +18,7 @@ struct MainScreenList: View {
                     ForecastElement(viewModel: forecastViewModel)
                 }
             } header: {
-                CurrentWeatherView(viewModel: viewModel)
+                CurrentWeatherView(viewModel: viewModel.currentWeatherViewModel)
                     .padding(.top, -20)
                     .padding(.bottom, 8)
                     .foregroundColor(.primary)

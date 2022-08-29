@@ -24,7 +24,7 @@ struct MainScreenView: View {
                         .frame(width: 30, height: 30)
                         .padding(.leading, 16)
                 }
-
+                
                 Searchbar(cityNameForRequest: .constant(""))
                     .disabled(true)
                     .onTapGesture {
@@ -57,6 +57,8 @@ struct MainScreenView: View {
         .onAppear {
             UITableView.appearance().showsVerticalScrollIndicator = false
             viewModel.getUserLocation()
+            let path = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
+            print(path)
         }
     }
 }

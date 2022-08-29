@@ -9,13 +9,35 @@ import Foundation
 import CoreLocation
 import Alamofire
 
+let plugWeatherModel = WeatherModel(
+    coord: Coord(lon: 0, lat: 0),
+    weather: [Weather(description: "Нет данных", icon: nil)],
+    main: Main(temp: 0, feelsLike: 0, humidity: 0),
+    visibility: 0,
+    name: "Нет данных",
+    dt: Date(),
+    timezone: 0
+)
+
+let plugCityModel = CityModel(
+    name: nil,
+    localNames: LocalNames(ru: "Нет данных"),
+    lat: 0,
+    lon: 0,
+    country: "Нет данных",
+    state: "Нет данных"
+)
+
 class MainScreenViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     // MARK: Get User Location
     
     private let manager = CLLocationManager()
     
-    @Published var locationFavoriteCityElementViewModel = FavoriteCityElementViewModel(weatherForElement: WeatherModel(coord: nil, weather: [Weather(description: nil, icon: nil)], main: Main(temp: nil, feelsLike: nil, humidity: nil), visibility: 0, name: nil, dt: Date(), timezone: nil), cityNameForElement: "Не удалось определить геопозицию")
+    @Published var locationFavoriteCityElementViewModel = FavoriteCityElementViewModel(
+        weatherForElement: plugWeatherModel,
+        cityNameForElement: "Не удалось определить геопозицию"
+    )
     
     private var userLocation: CLLocationCoordinate2D? {
         didSet {
@@ -44,7 +66,10 @@ class MainScreenViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
     
     var locationWeather = [WeatherModel]() {
         didSet {
-            locationFavoriteCityElementViewModel = FavoriteCityElementViewModel(weatherForElement: locationWeather.first ?? WeatherModel(coord: nil, weather: [Weather(description: nil, icon: nil)], main: Main(temp: nil, feelsLike: nil, humidity: nil), visibility: 0, name: nil, dt: Date(), timezone: nil), cityNameForElement: "\(locationWeather.first?.name ?? "Нет данных") (Ваша геопозиция)")
+            locationFavoriteCityElementViewModel = FavoriteCityElementViewModel(
+                weatherForElement: locationWeather.first ?? plugWeatherModel,
+                cityNameForElement: "\(locationWeather.first?.name ?? "Нет данных") (Ваша геопозиция)"
+            )
         }
     }
     
@@ -115,13 +140,8 @@ class MainScreenViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
     }
     
     // City that was picked by User
-    @Published var currentCity = CityModel(
-        localNames: LocalNames(ru: "Нет данных"),
-        lat: nil,
-        lon: nil
-    ) {
+    @Published var currentCity = plugCityModel {
         didSet {
-            loadCitiesFromDataManager()
             doRequestForForecast()
             doRequestForCurrentWeather()
         }
@@ -132,16 +152,24 @@ class MainScreenViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
     @Published var rowsForForecast = [ForecastViewModel]()
     
     // MARK: CurrentWeather Published Properties:
+        
+    @Published var currentWeatherViewModel = CurrentWeatherViewModel(
+        currentWeather: plugWeatherModel,
+        currentCity: plugCityModel
+    ) {
+        didSet {
+            loadFavoriteButton()
+        }
+    }
     
-    @Published var currentWeather = WeatherModel(
-        coord: nil,
-        weather: [Weather(description: "Нет данных", icon: "Нет данных")],
-        main: Main(temp: 0, feelsLike: 0, humidity: 0),
-        visibility: 0,
-        name: "Нет данных",
-        dt: Date(),
-        timezone: 0
-    )
+    func doRequestForCurrentWeather() {
+        NetworkManager.shared.requestCurrentWeather(lat: currentCity.lat ?? 55.7522, lon: currentCity.lon ?? 37.6156) { [unowned self] weather in
+            
+            currentWeatherViewModel = CurrentWeatherViewModel(currentWeather: weather, currentCity: currentCity)
+        } errorCompletion: { [unowned self] _ in
+            alertIsPresented.toggle()
+        }
+    }
 }
 
 // MARK: FavoriteCitiesView methods:
@@ -173,7 +201,7 @@ extension MainScreenViewModel {
     func deleteFavoriteCity(at indexSet: IndexSet) {
         DataManager.shared.deleteCityByIndexSet(indexSet: indexSet)
         rowsForFavoriteCityElement.remove(at: indexSet.first ?? 0)
-        loadCitiesFromDataManager()
+        loadFavoriteButton()
     }
 }
 
@@ -200,23 +228,23 @@ extension MainScreenViewModel {
     func addCityToDataManager() {
         if isFavoriteCity == true {
             DataManager.shared.addCity(
-                cityName: cityNameForCurrentWeather,
-                lat: currentWeather.coord?.lat ?? 0,
-                lon: currentWeather.coord?.lon ?? 0
+                cityName: currentWeatherViewModel.cityNameForCurrentWeather,
+                lat: currentWeatherViewModel.currentWeather.coord?.lat ?? 0,
+                lon: currentWeatherViewModel.currentWeather.coord?.lon ?? 0
             )
         } else {
             DataManager.shared.deleteCity(
-                cityName: cityNameForCurrentWeather
+                cityName: currentWeatherViewModel.cityNameForCurrentWeather
             )
         }
     }
     
-    func loadCitiesFromDataManager() {
+    func loadFavoriteButton() {
         DataManager.shared.fetchCities()
         
         let savedCities = DataManager.shared.savedCities
         
-        if savedCities.contains(where: {$0.cityName == cityNameForCurrentWeather}) {
+        if savedCities.contains(where: {$0.cityName == currentWeatherViewModel.cityNameForCurrentWeather}) {
             isFavoriteCity = true
         } else {
             isFavoriteCity = false
@@ -258,50 +286,9 @@ extension MainScreenViewModel {
             rowsForForecast = []
             
             forecast.forEach { [unowned self] weatherModel in
-                let forecastViewModel = ForecastViewModel(forecast: weatherModel, timezone: currentWeather.timezone ?? 0)
+                let forecastViewModel = ForecastViewModel(forecast: weatherModel, timezone: currentWeatherViewModel.currentWeather.timezone ?? 0)
                 rowsForForecast.append(forecastViewModel)
             }
-        } errorCompletion: { [unowned self] _ in
-            alertIsPresented.toggle()
-        }
-    }
-}
-
-// MARK: CurrentWeather Properties and Methods:
-
-extension MainScreenViewModel {
-    
-    var iconName: String {
-        IconManager.shared.getIconName(from: currentWeather.weather.first?.icon ?? "")
-    }
-    
-    var cityNameForCurrentWeather: String {
-        "\(currentCity.localNames?.ru ?? currentCity.name ?? "")"
-    }
-    
-    var descriptionForCurrentWeather: String {
-        "\(currentWeather.weather.first?.description?.capitalizingFirstLetter() ?? "")"
-    }
-    
-    var temperatureForCurrentWeather: String {
-        "\(lroundf(currentWeather.main.temp ?? 0))°"
-    }
-    
-    var feelsLikeForCurrentWeather: String {
-        "\(lroundf(currentWeather.main.feelsLike ?? 0))°"
-    }
-    
-    var visibilityForCurrentWeather: String {
-        "\(currentWeather.visibility/1000) км"
-    }
-    
-    var humidityForCurrentWeather: String {
-        "\(lroundf(currentWeather.main.humidity ?? 0))%"
-    }
-    
-    func doRequestForCurrentWeather() {
-        NetworkManager.shared.requestCurrentWeather(lat: currentCity.lat ?? 55.7522, lon: currentCity.lon ?? 37.6156) { [unowned self] weather in
-            currentWeather = weather
         } errorCompletion: { [unowned self] _ in
             alertIsPresented.toggle()
         }
