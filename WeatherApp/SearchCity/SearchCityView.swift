@@ -23,19 +23,14 @@ struct SearchCityView: View {
             
             Spacer()
             
-            List(viewModel.citiesNamesForSearchList, id: \.lat) { city in
+            List(viewModel.searchCityResponseViewModel, id: \.id) { SearchCityResponseViewModel in
                 
                 Button {
-                    viewModel.currentCity = city
+                    viewModel.currentCity = SearchCityResponseViewModel.cityModel
                     viewModel.cleanCityNameSearch()
                     viewModel.toggleIsSearchCityPresented()
                 } label: {
-                    HStack {
-                        Text("\((city.localNames?.ru ?? city.name) ?? "")")
-                        Spacer()
-                        Text("\(city.country ?? "")")
-                        Text("\(city.state ?? "")")
-                    }
+                    SearchCityResponseView(viewModel: SearchCityResponseViewModel)
                 }
                 .listSectionSeparator(.hidden)
             }

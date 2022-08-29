@@ -106,7 +106,7 @@ class MainScreenViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
                         let cityLon = String(format: "%.2f", city.lon)
                         let favoriteCityLat = String(format: "%.2f", Double((favoriteCity.coord?.lat)!))
                         let favoriteCityLon = String(format: "%.2f", Double((favoriteCity.coord?.lon)!))
-
+                        
                         if cityLat == favoriteCityLat && cityLon == favoriteCityLon {
                             sortedFavoriteCitiesWeather.append(favoriteCity)
                         }
@@ -129,7 +129,6 @@ class MainScreenViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
     
     // MARK: SearchCityView Published Properties:
     
-    @Published var citiesNamesForSearchList: [CityModel] = []
     @Published var isSearchCityViewPresented = false
     
     // User Interaction With Search TextField
@@ -147,12 +146,37 @@ class MainScreenViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
         }
     }
     
+    func toggleIsSearchCityPresented() {
+        isSearchCityViewPresented.toggle()
+    }
+    
+    func cleanCityNameSearch() {
+        cityNameSearch = ""
+    }
+    
+    @Published var searchCityResponseViewModel: [SearchCityResponseViewModel] = []
+    
+    func doRequestForCities() {
+        let cityName = NSMutableString(string: cityNameSearch) as CFMutableString
+        CFStringTransform(cityName, nil, "Any-Latin; Latin-ASCII; Any-Lower;" as CFString, false)
+        
+        NetworkManager.shared.requestCities(cityName: cityName as String) { [unowned self] cities in
+            searchCityResponseViewModel = []
+            
+            cities.forEach { cityModel in
+                searchCityResponseViewModel.append(SearchCityResponseViewModel(cityModel: cityModel))
+            }
+        } errorCompletion: { [unowned self] _ in
+            alertIsPresented.toggle()
+        }
+    }
+    
     // MARK: Forecast Published Properties:
     
     @Published var rowsForForecast = [ForecastViewModel]()
     
     // MARK: CurrentWeather Published Properties:
-        
+    
     @Published var currentWeatherViewModel = CurrentWeatherViewModel(
         currentWeather: plugWeatherModel,
         currentCity: plugCityModel
@@ -248,31 +272,6 @@ extension MainScreenViewModel {
             isFavoriteCity = true
         } else {
             isFavoriteCity = false
-        }
-    }
-}
-
-// MARK: SearchCityView Properties and Methods:
-
-extension MainScreenViewModel {
-    
-    func toggleIsSearchCityPresented() {
-        isSearchCityViewPresented.toggle()
-    }
-    
-    func cleanCityNameSearch() {
-        cityNameSearch = ""
-    }
-    
-    func doRequestForCities() {
-        
-        let cityName = NSMutableString(string: cityNameSearch) as CFMutableString
-        CFStringTransform(cityName, nil, "Any-Latin; Latin-ASCII; Any-Lower;" as CFString, false)
-        
-        NetworkManager.shared.requestCities(cityName: cityName as String) { [unowned self] cities in
-            citiesNamesForSearchList = cities
-        } errorCompletion: { [unowned self] _ in
-            alertIsPresented.toggle()
         }
     }
 }
