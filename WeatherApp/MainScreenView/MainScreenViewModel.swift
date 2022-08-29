@@ -6,8 +6,6 @@
 //
 
 import Foundation
-import CoreLocation
-import Alamofire
 
 let plugWeatherModel = WeatherModel(
     coord: Coord(lon: 0, lat: 0),
@@ -28,43 +26,22 @@ let plugCityModel = CityModel(
     state: "Нет данных"
 )
 
-class MainScreenViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
+class MainScreenViewModel: ObservableObject {
     
     // MARK: Get User Location
     
-    private let manager = CLLocationManager()
-    
-    @Published var locationFavoriteCityElementViewModel = FavoriteCityElementViewModel(
+    var locationFavoriteCityElementViewModel = FavoriteCityElementViewModel(
         weatherForElement: plugWeatherModel,
         cityNameForElement: "Не удалось определить геопозицию"
     )
     
-    private var userLocation: CLLocationCoordinate2D? {
+    private var userLocation: LocationModel? {
         didSet {
             changeWeatherByUserGeoposition()
         }
     }
     
-    override init() {
-        super.init()
-        self.manager.delegate = self
-        self.manager.requestAlwaysAuthorization()
-    }
-    
-    func getUserLocation() {
-        manager.requestLocation()
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        let location = locations.last?.coordinate
-        userLocation = location
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print(error.localizedDescription)
-    }
-    
-    var locationWeather = [WeatherModel]() {
+    private var locationWeather = [WeatherModel]() {
         didSet {
             locationFavoriteCityElementViewModel = FavoriteCityElementViewModel(
                 weatherForElement: locationWeather.first ?? plugWeatherModel,
@@ -73,11 +50,20 @@ class MainScreenViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
         }
     }
     
+    func getUserLocation() {
+        LocationManager.shared.getUserLocation { [unowned self] location in
+            userLocation = location
+        }
+    }
+    
     private func changeWeatherByUserGeoposition() {
-        NetworkManager.shared.requestCurrentWeather(lat: Float(userLocation?.latitude ?? 0), lon: Float(userLocation?.longitude ?? 0)) { [unowned self] weatherModel in
-            locationWeather.append(weatherModel)
-        } errorCompletion: { [unowned self] _ in
-            alertIsPresented.toggle()
+        if (userLocation?.latitude ?? 0) != 0 && (userLocation?.longitude ?? 0) != 0 {
+            
+            NetworkManager.shared.requestCurrentWeather(lat: Float(userLocation?.latitude ?? 0), lon: Float(userLocation?.longitude ?? 0)) { [unowned self] weatherModel in
+                locationWeather.append(weatherModel)
+            } errorCompletion: { [unowned self] _ in
+                alertIsPresented.toggle()
+            }
         }
     }
     // MARK: AlertPresentation:
@@ -187,7 +173,12 @@ class MainScreenViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
     }
     
     func doRequestForCurrentWeather() {
-        NetworkManager.shared.requestCurrentWeather(lat: currentCity.lat ?? 55.7522, lon: currentCity.lon ?? 37.6156) { [unowned self] weather in
+        if currentCity.lat == 0 && currentCity.lon == 0 {
+            currentWeatherViewModel = CurrentWeatherViewModel(currentWeather: plugWeatherModel, currentCity: plugCityModel)
+            return
+        }
+            
+        NetworkManager.shared.requestCurrentWeather(lat: currentCity.lat ?? 0, lon: currentCity.lon ?? 0) { [unowned self] weather in
             
             currentWeatherViewModel = CurrentWeatherViewModel(currentWeather: weather, currentCity: currentCity)
         } errorCompletion: { [unowned self] _ in
@@ -204,7 +195,8 @@ extension MainScreenViewModel {
         isFavoriteCitiesViewPresented.toggle()
     }
     
-    func onApper() {
+    func onAppearFavoriteCitiesView() {
+        getUserLocation()
         DataManager.shared.fetchCities()
         cities = DataManager.shared.savedCities
         doRequestForWeather()
@@ -281,7 +273,12 @@ extension MainScreenViewModel {
 extension MainScreenViewModel {
     
     func doRequestForForecast() {
-        NetworkManager.shared.requestForecast(lat: currentCity.lat ?? 55.7522, lon: currentCity.lon ?? 37.6156) { [unowned self] forecast in
+        if currentCity.lat == 0 && currentCity.lon == 0 {
+            rowsForForecast = []
+            return
+        }
+        
+        NetworkManager.shared.requestForecast(lat: currentCity.lat ?? 0, lon: currentCity.lon ?? 0) { [unowned self] forecast in
             rowsForForecast = []
             
             forecast.forEach { [unowned self] weatherModel in

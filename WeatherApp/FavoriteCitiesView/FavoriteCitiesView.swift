@@ -17,7 +17,11 @@ struct FavoriteCitiesView: View {
                 AlertView(isPresented: $viewModel.alertIsPresented)
                 List {
                     Button {
-                        viewModel.favoriteCityButtonPressed(elementViewModel: viewModel.locationFavoriteCityElementViewModel, lat: viewModel.locationFavoriteCityElementViewModel.lat, lon: viewModel.locationFavoriteCityElementViewModel.lon)
+                        viewModel.favoriteCityButtonPressed(
+                            elementViewModel: viewModel.locationFavoriteCityElementViewModel,
+                            lat: viewModel.locationFavoriteCityElementViewModel.lat,
+                            lon: viewModel.locationFavoriteCityElementViewModel.lon
+                        )
                         viewModel.toggleIsFavoriteCitiesViewPresented()
                     } label: {
                         FavoriteCityElement(viewModel: viewModel.locationFavoriteCityElementViewModel)
@@ -37,14 +41,10 @@ struct FavoriteCitiesView: View {
                 .foregroundColor(.primary)
                 .listRowSeparator(.hidden)
                 .listStyle(.insetGrouped)
-                
                 .onAppear {
-                    viewModel.onApper()
+                    viewModel.onAppearFavoriteCitiesView()
                 }
                 .navigationTitle("Города")
-                .toolbar {
-                    EditButton()
-                }
             }
         }
     }

@@ -56,7 +56,6 @@ struct MainScreenView: View {
         }
         .onAppear {
             UITableView.appearance().showsVerticalScrollIndicator = false
-            viewModel.getUserLocation()
             let path = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
             print(path)
         }
