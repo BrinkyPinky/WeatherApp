@@ -74,13 +74,14 @@ class MainScreenViewModel: ObservableObject {
         case .internetConnection: return "Похоже с вашим подключением что-то не так!"
         case .limitOfFavoriteCities: return "Вы не можете добавить более 10 городов в избранные!"
         case .geolocationCity: return "Ваша геопозиция уже находится в списке избранных!"
+        case .general: return "Похоже что-то пошло не так, попробуйте позже еще раз!"
         }
     }
     
     var codeForAlert: AlertCodes = .internetConnection
     
     enum AlertCodes {
-        case internetConnection, limitOfFavoriteCities, geolocationCity
+        case internetConnection, limitOfFavoriteCities, geolocationCity, general
     }
     
     @Published var alertIsPresented = false
@@ -295,6 +296,13 @@ extension MainScreenViewModel {
             guard !currentWeatherViewModel.cityNameForCurrentWeather.contains("(Ваша геопозиция)") else {
                 isFavoriteCity = false
                 codeForAlert = .geolocationCity
+                alertIsPresented.toggle()
+                return
+            }
+            
+            guard !currentWeatherViewModel.cityNameForCurrentWeather.contains("Нет данных") else {
+                isFavoriteCity = false
+                codeForAlert = .general
                 alertIsPresented.toggle()
                 return
             }
