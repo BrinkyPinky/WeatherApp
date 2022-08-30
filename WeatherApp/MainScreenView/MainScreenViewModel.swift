@@ -90,11 +90,12 @@ class MainScreenViewModel: ObservableObject {
     @Published var rowsForFavoriteCityElement = [FavoriteCityElementViewModel]() {
         didSet {
             if rowsForFavoriteCityElement.count == cities.count {
-                print("\(rowsForFavoriteCityElement.count) \(cities.count)")
+                LastUsedFavoriteCitiesElements.shared.saveData(
+                    favoriteCityElementViewModels: rowsForFavoriteCityElement
+                )
             }
         }
     }
-    
     
     @Published var isFavoriteCitiesViewPresented = false
     
@@ -251,6 +252,9 @@ extension MainScreenViewModel {
         DataManager.shared.deleteCityByIndexSet(indexSet: indexSet)
         rowsForFavoriteCityElement.remove(at: indexSet.first ?? 0)
         loadFavoriteButton()
+        LastUsedFavoriteCitiesElements.shared.saveData(
+            favoriteCityElementViewModels: rowsForFavoriteCityElement
+        )
     }
 }
 
@@ -304,6 +308,7 @@ extension MainScreenViewModel {
             DataManager.shared.deleteCity(
                 cityName: currentWeatherViewModel.cityNameForCurrentWeather
             )
+            doRequestForWeather()
         }
     }
     
@@ -349,7 +354,8 @@ extension MainScreenViewModel {
 extension MainScreenViewModel {
     func onInitMainScreen() {
         getUserLocation()
-        LastUsedWeatherDataManager.shared.fetchData { [unowned self] cityModel, weatherModel, forecastViewModels in
+        
+        LastUsedWeatherDataManager.shared.getData { [unowned self] cityModel, weatherModel, forecastViewModels in
             if cityModel != nil && weatherModel != nil && forecastViewModels != nil {
                 currentCity = cityModel!
                 currentWeatherViewModel = CurrentWeatherViewModel(
@@ -358,6 +364,11 @@ extension MainScreenViewModel {
                 )
                 rowsForForecast = forecastViewModels!
             }
+        }
+        
+        LastUsedFavoriteCitiesElements.shared.getData { [unowned self] favoriteCityElementViewModel in
+            guard favoriteCityElementViewModel != nil else { return }
+            rowsForFavoriteCityElement = favoriteCityElementViewModel!
         }
     }
 }

@@ -8,8 +8,8 @@
 import Foundation
 
 
-class FavoriteCityElementViewModel: ObservableObject {
-    let id = UUID()
+class FavoriteCityElementViewModel: ObservableObject, Codable {
+    var id = UUID()
     
     var temperatureForElement: String {
         "\(lroundf(weatherForElement.main.temp ?? 0))°"
@@ -38,5 +38,12 @@ class FavoriteCityElementViewModel: ObservableObject {
     required init(weatherForElement: WeatherModel, cityNameForElement: String) {
         self.weatherForElement = weatherForElement
         self.cityNameForElement = cityNameForElement
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(weatherForElement, forKey: .weatherForElement)
+        try container.encode(id, forKey: .id)
+        try container.encode(cityNameForElement, forKey: .cityNameForElement)
     }
 }

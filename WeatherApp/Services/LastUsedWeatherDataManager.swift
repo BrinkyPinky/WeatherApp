@@ -15,7 +15,7 @@ class LastUsedWeatherDataManager {
     
     let standard = UserDefaults.standard
     
-    func fetchData(completion: @escaping (CityModel?, WeatherModel?, [ForecastViewModel]?) -> Void) {
+    func getData(completion: @escaping (CityModel?, WeatherModel?, [ForecastViewModel]?) -> Void) {
         var cityModel: CityModel?
         var weatherModel: WeatherModel?
         var forecastViewModel: [ForecastViewModel]?

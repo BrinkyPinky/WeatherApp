@@ -40,6 +40,7 @@
 		E2D7AF6428BD5B6900DA2C0A /* SearchCityResponseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D7AF6328BD5B6900DA2C0A /* SearchCityResponseViewModel.swift */; };
 		E2D7AF6628BD62EB00DA2C0A /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D7AF6528BD62EB00DA2C0A /* LocationManager.swift */; };
 		E2E90FAF28BCC4370035D5AA /* CurrentWeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E90FAE28BCC4370035D5AA /* CurrentWeatherViewModel.swift */; };
+		E2F6BF5928BDB9CE003614AD /* LastUsedFavoriteCitiesElements.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F6BF5828BDB9CE003614AD /* LastUsedFavoriteCitiesElements.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -79,6 +80,7 @@
 		E2D7AF6328BD5B6900DA2C0A /* SearchCityResponseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCityResponseViewModel.swift; sourceTree = "<group>"; };
 		E2D7AF6528BD62EB00DA2C0A /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		E2E90FAE28BCC4370035D5AA /* CurrentWeatherViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentWeatherViewModel.swift; sourceTree = "<group>"; };
+		E2F6BF5828BDB9CE003614AD /* LastUsedFavoriteCitiesElements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastUsedFavoriteCitiesElements.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,6 +170,7 @@
 				E24D06A128AF93B10008671E /* NetworkManager.swift */,
 				E22A4C0A28B390680074CD35 /* DataManager.swift */,
 				E2D5F8EE28BD7F96007E75F8 /* LastUsedWeatherDataManager.swift */,
+				E2F6BF5828BDB9CE003614AD /* LastUsedFavoriteCitiesElements.swift */,
 				E2A388AF28B4F41A000841FC /* IconManager.swift */,
 			);
 			path = Services;
@@ -373,6 +376,7 @@
 				E29C415E28AFB1B5003A933A /* Extension + String.swift in Sources */,
 				E25E446328AF90E2007FAA91 /* WeatherAppApp.swift in Sources */,
 				E24D06A228AF93B10008671E /* NetworkManager.swift in Sources */,
+				E2F6BF5928BDB9CE003614AD /* LastUsedFavoriteCitiesElements.swift in Sources */,
 				E2BBCE2428B56FB900FDFD19 /* AlertView.swift in Sources */,
 				E258613728B7737300635EBE /* MainScreenViewModel.swift in Sources */,
 				E29C689028B102BE006E5636 /* ForecastViewModel.swift in Sources */,
