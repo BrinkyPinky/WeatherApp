@@ -14,7 +14,7 @@ struct FavoriteCitiesView: View {
     var body: some View {
         NavigationView {
             VStack {
-                AlertView(isPresented: $viewModel.alertIsPresented)
+                AlertView(isPresented: $viewModel.alertIsPresented, message: viewModel.messageForAlert)
                 List {
                     Button {
                         viewModel.favoriteCityButtonPressed(

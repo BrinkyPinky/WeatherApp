@@ -23,7 +23,6 @@ class DataManager {
         }
 
         fetchCities()
-        print(savedCities)
     }
     
     func addCity(cityName: String, lat: Float, lon: Float) {

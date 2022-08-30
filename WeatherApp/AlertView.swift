@@ -10,12 +10,13 @@ import SwiftUI
 struct AlertView: View {
     
     @Binding var isPresented: Bool
+    var message: String
     
     var body: some View {
         VStack {
             
         }.alert("Error", isPresented: $isPresented, actions: {}) {
-            Text("Something went wrong 😢")
+            Text(message)
         }
 
     }
@@ -23,6 +24,6 @@ struct AlertView: View {
 
 struct AlertView_Previews: PreviewProvider {
     static var previews: some View {
-        AlertView(isPresented: .constant(true))
+        AlertView(isPresented: .constant(true), message: "eqw")
     }
 }

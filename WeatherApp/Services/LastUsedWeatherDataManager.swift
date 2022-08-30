@@ -15,7 +15,7 @@ class LastUsedWeatherDataManager {
     
     let standard = UserDefaults.standard
     
-    func fetchData() -> (CityModel?, WeatherModel?, [ForecastViewModel]?) {
+    func fetchData(completion: @escaping (CityModel?, WeatherModel?, [ForecastViewModel]?) -> Void) {
         var cityModel: CityModel?
         var weatherModel: WeatherModel?
         var forecastViewModel: [ForecastViewModel]?
@@ -36,22 +36,12 @@ class LastUsedWeatherDataManager {
             forecastViewModel = forecastData
         }
         
-        return (cityModel, weatherModel, forecastViewModel)
+        completion(cityModel, weatherModel, forecastViewModel)
     }
     
     func saveData(cityModel: CityModel, weatherModel: WeatherModel, forecastModel: [ForecastViewModel]) {
-        
-        
-        //        print("citymodel: \(cityModel)")
-        //        print("weathermodel: \(weatherModel)")
-        //        print("forecastModel: \(forecastModel.first?.imageName)")
-        
         UserDefaults.standard.set(try? PropertyListEncoder().encode(cityModel), forKey: "LastUsedCityModel")
         UserDefaults.standard.set(try? PropertyListEncoder().encode(weatherModel), forKey: "LastUsedWeatherModel")
         UserDefaults.standard.set(try? PropertyListEncoder().encode(forecastModel), forKey: "LastUsedForecastModel")
-        
-        print("eqw")
-        
-        
     }
 }

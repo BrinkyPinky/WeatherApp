@@ -9,11 +9,16 @@ import SwiftUI
 
 struct MainScreenView: View {
     
-    @StateObject private var viewModel = MainScreenViewModel()
+    @ObservedObject private var viewModel = MainScreenViewModel()
+    
+    init() {
+        viewModel.onInitMainScreen()
+
+    }
     
     var body: some View {
         VStack {
-            AlertView(isPresented: $viewModel.alertIsPresented)
+            AlertView(isPresented: $viewModel.alertIsPresented, message: viewModel.messageForAlert)
             HStack {
                 Button {
                     viewModel.toggleIsFavoriteCitiesViewPresented()
@@ -58,10 +63,6 @@ struct MainScreenView: View {
             UITableView.appearance().showsVerticalScrollIndicator = false
 //            let path = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
 //            print(path)
-            
-            print(LastUsedWeatherDataManager.shared.fetchData().0)
-            print(LastUsedWeatherDataManager.shared.fetchData().1)
-            print(LastUsedWeatherDataManager.shared.fetchData().2)
         }
     }
 }

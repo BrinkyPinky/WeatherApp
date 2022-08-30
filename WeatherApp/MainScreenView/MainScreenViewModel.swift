@@ -32,7 +32,7 @@ class MainScreenViewModel: ObservableObject {
     
     var locationFavoriteCityElementViewModel = FavoriteCityElementViewModel(
         weatherForElement: plugWeatherModel,
-        cityNameForElement: "Не удалось определить геопозицию"
+        cityNameForElement: "Нет данных (Ваша геопозиция)"
     )
     
     private var userLocation: LocationModel? {
@@ -62,17 +62,38 @@ class MainScreenViewModel: ObservableObject {
             NetworkManager.shared.requestCurrentWeather(lat: Float(userLocation?.latitude ?? 0), lon: Float(userLocation?.longitude ?? 0)) { [unowned self] weatherModel in
                 locationWeather.append(weatherModel)
             } errorCompletion: { [unowned self] _ in
+                codeForAlert = .internetConnection
                 alertIsPresented.toggle()
             }
         }
     }
     // MARK: AlertPresentation:
     
+    var messageForAlert: String {
+        switch codeForAlert {
+        case .internetConnection: return "Похоже с вашим подключением что-то не так!"
+        case .limitOfFavoriteCities: return "Вы не можете добавить более 10 городов в избранные!"
+        case .geolocationCity: return "Ваша геопозиция уже находится в списке избранных!"
+        }
+    }
+    
+    var codeForAlert: AlertCodes = .internetConnection
+    
+    enum AlertCodes {
+        case internetConnection, limitOfFavoriteCities, geolocationCity
+    }
+    
     @Published var alertIsPresented = false
     
     // MARK: FavoriteCitiesView Stored and Published Properties:
     
-    @Published var rowsForFavoriteCityElement = [FavoriteCityElementViewModel]()
+    @Published var rowsForFavoriteCityElement = [FavoriteCityElementViewModel]() {
+        didSet {
+            if rowsForFavoriteCityElement.count == cities.count {
+                print("\(rowsForFavoriteCityElement.count) \(cities.count)")
+            }
+        }
+    }
     
     
     @Published var isFavoriteCitiesViewPresented = false
@@ -153,6 +174,7 @@ class MainScreenViewModel: ObservableObject {
                 searchCityResponseViewModel.append(SearchCityResponseViewModel(cityModel: cityModel))
             }
         } errorCompletion: { [unowned self] _ in
+            codeForAlert = .internetConnection
             alertIsPresented.toggle()
         }
     }
@@ -176,7 +198,11 @@ class MainScreenViewModel: ObservableObject {
     @Published var currentWeatherViewModel = CurrentWeatherViewModel(
         currentWeather: plugWeatherModel,
         currentCity: plugCityModel
-    )
+    ) {
+        didSet {
+            loadFavoriteButton()
+        }
+    }
     
     func doRequestForCurrentWeather() {
         if currentCity.lat == 0 && currentCity.lon == 0 {
@@ -188,6 +214,7 @@ class MainScreenViewModel: ObservableObject {
             
             currentWeatherViewModel = CurrentWeatherViewModel(currentWeather: weather, currentCity: currentCity)
         } errorCompletion: { [unowned self] _ in
+            codeForAlert = .internetConnection
             alertIsPresented.toggle()
         }
     }
@@ -202,7 +229,6 @@ extension MainScreenViewModel {
     }
     
     func onAppearFavoriteCitiesView() {
-        getUserLocation()
         DataManager.shared.fetchCities()
         cities = DataManager.shared.savedCities
         doRequestForWeather()
@@ -215,6 +241,7 @@ extension MainScreenViewModel {
             NetworkManager.shared.requestCurrentWeather(lat: CityEntity.lat, lon: CityEntity.lon) { [unowned self] weatherModel in
                 favoriteCitiesWeather.append(weatherModel)
             } errorCompletion: { [unowned self] _ in
+                codeForAlert = .internetConnection
                 alertIsPresented.toggle()
             }
         }
@@ -248,7 +275,26 @@ extension MainScreenViewModel {
     }
     
     func addCityToDataManager() {
+        DataManager.shared.fetchCities()
+        
+        let savedCities = DataManager.shared.savedCities
+        
         if isFavoriteCity == true {
+            
+            guard savedCities.count < 10 else {
+                isFavoriteCity = false
+                codeForAlert = .limitOfFavoriteCities
+                alertIsPresented.toggle()
+                return
+            }
+            
+            guard !currentWeatherViewModel.cityNameForCurrentWeather.contains("(Ваша геопозиция)") else {
+                isFavoriteCity = false
+                codeForAlert = .geolocationCity
+                alertIsPresented.toggle()
+                return
+            }
+            
             DataManager.shared.addCity(
                 cityName: currentWeatherViewModel.cityNameForCurrentWeather,
                 lat: currentWeatherViewModel.currentWeather.coord?.lat ?? 0,
@@ -279,17 +325,39 @@ extension MainScreenViewModel {
 extension MainScreenViewModel {
     
     func doRequestForForecast() {
-        
-        rowsForForecast = []
-        if currentCity.lat == 0 && currentCity.lon == 0 { return }
+        if currentCity.lat == 0 && currentCity.lon == 0 {
+            rowsForForecast = []
+            return
+        }
 
         NetworkManager.shared.requestForecast(lat: currentCity.lat ?? 0, lon: currentCity.lon ?? 0) { [unowned self] forecast in
+            rowsForForecast = []
+
             forecast.forEach { [unowned self] weatherModel in
                 let forecastViewModel = ForecastViewModel(forecast: weatherModel, timezone: currentWeatherViewModel.currentWeather.timezone ?? 0)
                 rowsForForecast.append(forecastViewModel)
             }
         } errorCompletion: { [unowned self] _ in
+            codeForAlert = .internetConnection
             alertIsPresented.toggle()
+        }
+    }
+}
+
+
+// MARK: onAppearMainScreen
+extension MainScreenViewModel {
+    func onInitMainScreen() {
+        getUserLocation()
+        LastUsedWeatherDataManager.shared.fetchData { [unowned self] cityModel, weatherModel, forecastViewModels in
+            if cityModel != nil && weatherModel != nil && forecastViewModels != nil {
+                currentCity = cityModel!
+                currentWeatherViewModel = CurrentWeatherViewModel(
+                    currentWeather: weatherModel!,
+                    currentCity: cityModel!
+                )
+                rowsForForecast = forecastViewModels!
+            }
         }
     }
 }
