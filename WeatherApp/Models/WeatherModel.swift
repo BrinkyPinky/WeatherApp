@@ -11,7 +11,7 @@ struct ForecastModel: Decodable {
     let list: [WeatherModel]
 }
 
-struct WeatherModel: Decodable {
+struct WeatherModel: Codable {
     let coord: Coord?
     let weather: [Weather]
     let main: Main
@@ -19,6 +19,17 @@ struct WeatherModel: Decodable {
     let name: String?
     let dt: Date
     let timezone: Int?
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(coord, forKey: .coord)
+        try container.encode(weather, forKey: .weather)
+        try container.encode(main, forKey: .main)
+        try container.encode(visibility, forKey: .visibility)
+        try container.encode(name, forKey: .name)
+        try container.encode(dt, forKey: .dt)
+        try container.encode(timezone, forKey: .timezone)
+    }
 }
 
 extension WeatherModel: Equatable {
@@ -27,17 +38,17 @@ extension WeatherModel: Equatable {
     }
 }
 
-struct Coord: Decodable {
+struct Coord: Codable {
     let lon: Float?
     let lat: Float?
 }
 
-struct Weather: Decodable {
+struct Weather: Codable {
     let description: String?
     let icon: String?
 }
 
-struct Main: Decodable {
+struct Main: Codable {
     let temp: Float?
     let feelsLike: Float?
     let humidity: Float?

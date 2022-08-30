@@ -159,18 +159,24 @@ class MainScreenViewModel: ObservableObject {
     
     // MARK: Forecast Published Properties:
     
-    @Published var rowsForForecast = [ForecastViewModel]()
+    @Published var rowsForForecast = [ForecastViewModel]() {
+        didSet {
+            if rowsForForecast.count == 40 {
+                LastUsedWeatherDataManager.shared.saveData(
+                    cityModel: currentCity,
+                    weatherModel: currentWeatherViewModel.currentWeather,
+                    forecastModel: rowsForForecast
+                )
+            }
+        }
+    }
     
     // MARK: CurrentWeather Published Properties:
     
     @Published var currentWeatherViewModel = CurrentWeatherViewModel(
         currentWeather: plugWeatherModel,
         currentCity: plugCityModel
-    ) {
-        didSet {
-            loadFavoriteButton()
-        }
-    }
+    )
     
     func doRequestForCurrentWeather() {
         if currentCity.lat == 0 && currentCity.lon == 0 {
@@ -273,14 +279,11 @@ extension MainScreenViewModel {
 extension MainScreenViewModel {
     
     func doRequestForForecast() {
-        if currentCity.lat == 0 && currentCity.lon == 0 {
-            rowsForForecast = []
-            return
-        }
         
+        rowsForForecast = []
+        if currentCity.lat == 0 && currentCity.lon == 0 { return }
+
         NetworkManager.shared.requestForecast(lat: currentCity.lat ?? 0, lon: currentCity.lon ?? 0) { [unowned self] forecast in
-            rowsForForecast = []
-            
             forecast.forEach { [unowned self] weatherModel in
                 let forecastViewModel = ForecastViewModel(forecast: weatherModel, timezone: currentWeatherViewModel.currentWeather.timezone ?? 0)
                 rowsForForecast.append(forecastViewModel)

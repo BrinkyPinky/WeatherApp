@@ -56,8 +56,12 @@ struct MainScreenView: View {
         }
         .onAppear {
             UITableView.appearance().showsVerticalScrollIndicator = false
-            let path = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
-            print(path)
+//            let path = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
+//            print(path)
+            
+            print(LastUsedWeatherDataManager.shared.fetchData().0)
+            print(LastUsedWeatherDataManager.shared.fetchData().1)
+            print(LastUsedWeatherDataManager.shared.fetchData().2)
         }
     }
 }

@@ -7,15 +7,7 @@
 
 import Foundation
 
-protocol ForecastViewModelProtocol {
-    var id: UUID { get }
-    var temperature: String { get }
-    var date: String { get }
-    var imageName: String { get }
-    init(forecast: WeatherModel, timezone: Int)
-}
-
-class ForecastViewModel: ForecastViewModelProtocol, ObservableObject {
+class ForecastViewModel: ObservableObject, Codable {
     var id = UUID()
     
     var temperature: String {
@@ -44,5 +36,12 @@ class ForecastViewModel: ForecastViewModelProtocol, ObservableObject {
     required init(forecast: WeatherModel, timezone: Int) {
         self.forecast = forecast
         self.timezone = timezone
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(forecast, forKey: .forecast)
+        try container.encode(timezone, forKey: .timezone)
+        try container.encode(id, forKey: .id)
     }
 }
