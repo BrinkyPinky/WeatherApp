@@ -7,7 +7,6 @@
 
 import CoreLocation
 
-
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate  {    
     let manager = CLLocationManager()
     
@@ -25,10 +24,6 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate  {
             longitude: manager.location?.coordinate.longitude,
             latitude: manager.location?.coordinate.latitude
         ))
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

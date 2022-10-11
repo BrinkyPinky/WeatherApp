@@ -28,7 +28,7 @@ let plugCityModel = CityModel(
 
 class MainScreenViewModel: ObservableObject {
     
-    // MARK: Get User Location
+    // MARK: User Location
     
     var locationFavoriteCityElementViewModel = FavoriteCityElementViewModel(
         weatherForElement: plugWeatherModel,
@@ -50,23 +50,6 @@ class MainScreenViewModel: ObservableObject {
         }
     }
     
-    func getUserLocation() {
-        LocationManager.shared.getUserLocation { [unowned self] location in
-            userLocation = location
-        }
-    }
-    
-    private func changeWeatherByUserGeoposition() {
-        if (userLocation?.latitude ?? 0) != 0 && (userLocation?.longitude ?? 0) != 0 {
-            
-            NetworkManager.shared.requestCurrentWeather(lat: Float(userLocation?.latitude ?? 0), lon: Float(userLocation?.longitude ?? 0)) { [unowned self] weatherModel in
-                locationWeather.append(weatherModel)
-            } errorCompletion: { [unowned self] _ in
-                codeForAlert = .internetConnection
-                alertIsPresented.toggle()
-            }
-        }
-    }
     // MARK: AlertPresentation:
     
     var messageForAlert: String {
@@ -107,7 +90,6 @@ class MainScreenViewModel: ObservableObject {
             if favoriteCitiesWeather.count == cities.count {
                 rowsForFavoriteCityElement = []
                 var sortedFavoriteCitiesWeather = [WeatherModel]()
-                
                 
                 for city in cities {
                     for favoriteCity in favoriteCitiesWeather {
@@ -155,31 +137,7 @@ class MainScreenViewModel: ObservableObject {
         }
     }
     
-    func toggleIsSearchCityPresented() {
-        isSearchCityViewPresented.toggle()
-    }
-    
-    func cleanCityNameSearch() {
-        cityNameSearch = ""
-    }
-    
     @Published var searchCityResponseViewModel: [SearchCityResponseViewModel] = []
-    
-    func doRequestForCities() {
-        let cityName = NSMutableString(string: cityNameSearch) as CFMutableString
-        CFStringTransform(cityName, nil, "Any-Latin; Latin-ASCII; Any-Lower;" as CFString, false)
-        
-        NetworkManager.shared.requestCities(cityName: cityName as String) { [unowned self] cities in
-            searchCityResponseViewModel = []
-            
-            cities.forEach { cityModel in
-                searchCityResponseViewModel.append(SearchCityResponseViewModel(cityModel: cityModel))
-            }
-        } errorCompletion: { [unowned self] _ in
-            codeForAlert = .internetConnection
-            alertIsPresented.toggle()
-        }
-    }
     
     // MARK: Forecast Published Properties:
     
@@ -205,19 +163,26 @@ class MainScreenViewModel: ObservableObject {
             loadFavoriteButton()
         }
     }
-    
-    func doRequestForCurrentWeather() {
-        if currentCity.lat == 0 && currentCity.lon == 0 {
-            currentWeatherViewModel = CurrentWeatherViewModel(currentWeather: plugWeatherModel, currentCity: plugCityModel)
-            return
+}
+
+// MARK: User Location Methods
+
+extension MainScreenViewModel {
+    func getUserLocation() {
+        LocationManager.shared.getUserLocation { [unowned self] location in
+            userLocation = location
         }
+    }
+    
+    private func changeWeatherByUserGeoposition() {
+        if (userLocation?.latitude ?? 0) != 0 && (userLocation?.longitude ?? 0) != 0 {
             
-        NetworkManager.shared.requestCurrentWeather(lat: currentCity.lat ?? 0, lon: currentCity.lon ?? 0) { [unowned self] weather in
-            
-            currentWeatherViewModel = CurrentWeatherViewModel(currentWeather: weather, currentCity: currentCity)
-        } errorCompletion: { [unowned self] _ in
-            codeForAlert = .internetConnection
-            alertIsPresented.toggle()
+            NetworkManager.shared.requestCurrentWeather(lat: Float(userLocation?.latitude ?? 0), lon: Float(userLocation?.longitude ?? 0)) { [unowned self] weatherModel in
+                locationWeather.append(weatherModel)
+            } errorCompletion: { [unowned self] _ in
+                codeForAlert = .internetConnection
+                alertIsPresented.toggle()
+            }
         }
     }
 }
@@ -333,6 +298,35 @@ extension MainScreenViewModel {
     }
 }
 
+// MARK: SearchCityView Methods:
+
+extension MainScreenViewModel {
+    func toggleIsSearchCityPresented() {
+        isSearchCityViewPresented.toggle()
+    }
+    
+    func cleanCityNameSearch() {
+        cityNameSearch = ""
+    }
+    
+    
+    func doRequestForCities() {
+        let cityName = NSMutableString(string: cityNameSearch) as CFMutableString
+        CFStringTransform(cityName, nil, "Any-Latin; Latin-ASCII; Any-Lower;" as CFString, false)
+        
+        NetworkManager.shared.requestCities(cityName: cityName as String) { [unowned self] cities in
+            searchCityResponseViewModel = []
+            
+            cities.forEach { cityModel in
+                searchCityResponseViewModel.append(SearchCityResponseViewModel(cityModel: cityModel))
+            }
+        } errorCompletion: { [unowned self] _ in
+            codeForAlert = .internetConnection
+            alertIsPresented.toggle()
+        }
+    }
+}
+
 // MARK: Forecast Properties and Methods:
 
 extension MainScreenViewModel {
@@ -347,8 +341,8 @@ extension MainScreenViewModel {
             rowsForForecast = []
 
             forecast.forEach { [unowned self] weatherModel in
-                let forecastViewModel = ForecastViewModel(forecast: weatherModel, timezone: currentWeatherViewModel.currentWeather.timezone ?? 0)
-                rowsForForecast.append(forecastViewModel)
+                let forecastViewModel = ForecastViewModel(forecast: weatherModel, timezone: self.currentWeatherViewModel.currentWeather.timezone ?? 0)
+                self.rowsForForecast.append(forecastViewModel)
             }
         } errorCompletion: { [unowned self] _ in
             codeForAlert = .internetConnection
@@ -357,6 +351,24 @@ extension MainScreenViewModel {
     }
 }
 
+// MARK: Current Weather methods:
+
+extension MainScreenViewModel {
+    func doRequestForCurrentWeather() {
+        if currentCity.lat == 0 && currentCity.lon == 0 {
+            currentWeatherViewModel = CurrentWeatherViewModel(currentWeather: plugWeatherModel, currentCity: plugCityModel)
+            return
+        }
+        
+        NetworkManager.shared.requestCurrentWeather(lat: currentCity.lat ?? 0, lon: currentCity.lon ?? 0) { [unowned self] weather in
+            
+            currentWeatherViewModel = CurrentWeatherViewModel(currentWeather: weather, currentCity: currentCity)
+        } errorCompletion: { [unowned self] _ in
+            codeForAlert = .internetConnection
+            alertIsPresented.toggle()
+        }
+    }
+}
 
 // MARK: onAppearMainScreen
 extension MainScreenViewModel {
