@@ -29,4 +29,19 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate  {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error.localizedDescription)
     }
+    
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == .authorizedWhenInUse {
+            manager.requestLocation()
+        }
+    }
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+
+        if locations.first != nil {
+            print("location:: (location)")
+        }
+
+    }
 }
